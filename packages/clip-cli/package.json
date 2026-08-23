@@ -1,0 +1,37 @@
+{
+  "name": "@clip/cli",
+  "version": "0.0.0",
+  "type": "module",
+  "description": "CLI for clipping web content into markdown for clip.rajjoshi.me",
+  "bin": {
+    "clip": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "clip": "tsx src/index.ts",
+    "build": "tsup",
+    "prepublishOnly": "pnpm run build",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint src",
+    "test": "tsx --test src/__tests__/*.test.ts"
+  },
+  "dependencies": {
+    "@clip/schema": "^0.1.0",
+    "@inquirer/prompts": "^8.4.2",
+    "node-html-parser": "^7.1.0",
+    "sharp": "^0.34.5",
+    "yaml": "^2.8.3"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.1",
+    "tsx": "^4.21.0"
+  }
+}
