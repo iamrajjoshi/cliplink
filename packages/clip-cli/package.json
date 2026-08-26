@@ -8,7 +8,7 @@
   "type": "module",
   "description": "CLI for clipping web content into markdown for clip.rajjoshi.me",
   "bin": {
-    "clip": "./dist/index.js"
+    "clip": "dist/index.js"
   },
   "files": [
     "dist"
