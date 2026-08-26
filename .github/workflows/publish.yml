@@ -37,7 +37,9 @@ jobs:
         run: pnpm test
 
       - name: Publish @iamrajjoshi/schema
-        run: pnpm --filter @iamrajjoshi/schema publish --no-git-checks
+        run: npm publish
+        working-directory: packages/clip-schema
 
       - name: Publish @iamrajjoshi/cli
-        run: pnpm --filter @iamrajjoshi/cli publish --no-git-checks
+        run: npm publish
+        working-directory: packages/clip-cli
