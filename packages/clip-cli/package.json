@@ -1,6 +1,10 @@
 {
   "name": "@clip/cli",
-  "version": "0.0.0",
+  "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iamrajjoshi/clip-cli.git"
+  },
   "type": "module",
   "description": "CLI for clipping web content into markdown for clip.rajjoshi.me",
   "bin": {

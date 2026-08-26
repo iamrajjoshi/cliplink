@@ -1,4 +1,4 @@
-name: Publish CLI to npm
+name: Publish to npm
 
 on:
   push:
@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write  # Required for trusted publishing (OIDC)
 
 jobs:
   publish:
@@ -22,7 +23,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm
           registry-url: https://registry.npmjs.org
 
@@ -37,10 +38,6 @@ jobs:
 
       - name: Publish @clip/schema
         run: pnpm --filter @clip/schema publish --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish @clip/cli
         run: pnpm --filter @clip/cli publish --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
