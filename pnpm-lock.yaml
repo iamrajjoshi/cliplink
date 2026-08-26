@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  '@iamrajjoshi/schema': workspace:*
+  '@iamrajjoshi/clip-schema': workspace:*
 
 importers:
 
@@ -44,7 +44,7 @@ importers:
 
   packages/clip-cli:
     dependencies:
-      '@iamrajjoshi/schema':
+      '@iamrajjoshi/clip-schema':
         specifier: workspace:*
         version: link:../clip-schema
       '@inquirer/prompts':

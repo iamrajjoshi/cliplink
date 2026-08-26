@@ -3,4 +3,4 @@ export {
   clipKindSchema,
   type ClipFrontmatter,
   type ClipKind,
-} from "@iamrajjoshi/schema";
+} from "@iamrajjoshi/clip-schema";
