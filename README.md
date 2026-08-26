@@ -1,8 +1,8 @@
-# @clip/cli
+# @iamrajjoshi/cli
 
 A small `clip` CLI for saving links, tweets, images, videos, and notes into repo-backed markdown for [clip.rajjoshi.me](https://clip.rajjoshi.me).
 
-The `clip` CLI is published as the public npm package **`@clip/cli`**. After a one-time `npm install -g @clip/cli` and `clip login`, you can run `clip <url>` from any directory to publish a clip directly to the GitHub repository through the GitHub REST API, no local clone required. The original local-repo workflow (write files, commit, push via local git) remains fully supported.
+The `clip` CLI is published as the public npm package **`@iamrajjoshi/cli`**. After a one-time `npm install -g @iamrajjoshi/cli` and `clip login`, you can run `clip <url>` from any directory to publish a clip directly to the GitHub repository through the GitHub REST API, no local clone required. The original local-repo workflow (write files, commit, push via local git) remains fully supported.
 
 ## Table of Contents
 
@@ -24,7 +24,7 @@ The `clip` CLI is published as the public npm package **`@clip/cli`**. After a o
 Install the CLI globally from npm:
 
 ```bash
-npm install -g @clip/cli
+npm install -g @iamrajjoshi/cli
 ```
 
 Requires Node.js >= 20. After install, the `clip` command is available on your PATH.
@@ -400,7 +400,7 @@ pnpm format:check
 
 This repo publishes two packages to npm:
 
-- `@clip/schema` — the shared Zod schema (published first)
-- `@clip/cli` — the CLI itself (depends on `@clip/schema`)
+- `@iamrajjoshi/schema` — the shared Zod schema (published first)
+- `@iamrajjoshi/cli` — the CLI itself (depends on `@iamrajjoshi/schema`)
 
-Publishing is automated via GitHub Actions on tag push (`v*`). The workflow builds, tests, then publishes `@clip/schema` before `@clip/cli`.
+Publishing is automated via GitHub Actions on tag push (`v*`). The workflow builds, tests, then publishes `@iamrajjoshi/schema` before `@iamrajjoshi/cli`.

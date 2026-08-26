@@ -6,7 +6,7 @@ on:
 
 permissions:
   contents: read
-  id-token: write  # Required for trusted publishing (OIDC)
+  id-token: write # Required for trusted publishing (OIDC)
 
 jobs:
   publish:
@@ -36,8 +36,8 @@ jobs:
       - name: Test
         run: pnpm test
 
-      - name: Publish @clip/schema
-        run: pnpm --filter @clip/schema publish --no-git-checks
+      - name: Publish @iamrajjoshi/schema
+        run: pnpm --filter @iamrajjoshi/schema publish --no-git-checks
 
-      - name: Publish @clip/cli
-        run: pnpm --filter @clip/cli publish --no-git-checks
+      - name: Publish @iamrajjoshi/cli
+        run: pnpm --filter @iamrajjoshi/cli publish --no-git-checks
