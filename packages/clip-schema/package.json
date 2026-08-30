@@ -1,6 +1,6 @@
 {
   "name": "cliplink-schema",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Shared Zod schema for clip CLI and web app",
   "repository": {
     "type": "git",
