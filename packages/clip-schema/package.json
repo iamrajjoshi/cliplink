@@ -4,7 +4,7 @@
   "description": "Shared Zod schema for clip CLI and web app",
   "repository": {
     "type": "git",
-    "url": "https://github.com/iamrajjoshi/clip-cli.git"
+    "url": "https://github.com/iamrajjoshi/clipit.git"
   },
   "type": "module",
   "exports": "./src/index.ts",
