@@ -1,5 +1,5 @@
 {
-  "name": "@iamrajjoshi/clip-schema",
+  "name": "clipit-schema",
   "version": "0.1.0",
   "description": "Shared Zod schema for clip CLI and web app",
   "repository": {

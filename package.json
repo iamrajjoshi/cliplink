@@ -7,7 +7,7 @@
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "lint": "pnpm -r lint",
-    "check": "pnpm --filter @iamrajjoshi/clip-cli typecheck",
+    "check": "pnpm --filter clipit typecheck",
     "format": "oxfmt .",
     "format:check": "oxfmt --check .",
     "knip": "knip --include dependencies,devDependencies,unlisted,binaries"
@@ -26,7 +26,7 @@
   },
   "pnpm": {
     "overrides": {
-      "@iamrajjoshi/clip-schema": "workspace:*"
+      "clipit-schema": "workspace:*"
     }
   }
 }

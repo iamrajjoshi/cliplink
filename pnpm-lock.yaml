@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  '@iamrajjoshi/clip-schema': workspace:*
+  clipit-schema: workspace:*
 
 importers:
 
@@ -44,12 +44,12 @@ importers:
 
   packages/clip-cli:
     dependencies:
-      '@iamrajjoshi/clip-schema':
-        specifier: workspace:*
-        version: link:../clip-schema
       '@inquirer/prompts':
         specifier: ^8.4.2
         version: 8.6.0(@types/node@25.9.5)
+      clipit-schema:
+        specifier: workspace:*
+        version: link:../clip-schema
       node-html-parser:
         specifier: ^7.1.0
         version: 7.1.0

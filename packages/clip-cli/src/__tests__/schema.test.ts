@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { clipDataSchema, clipFrontmatterSchema, clipKindSchema } from "@iamrajjoshi/clip-schema";
+import { clipDataSchema, clipFrontmatterSchema, clipKindSchema } from "clipit-schema";
 
-describe("@iamrajjoshi/clip-schema package", () => {
+describe("clipit-schema package", () => {
   describe("valid clips parse", () => {
     it("parses a valid link clip", () => {
       const result = clipFrontmatterSchema.safeParse({

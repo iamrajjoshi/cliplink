@@ -36,10 +36,10 @@ jobs:
       - name: Test
         run: pnpm test
 
-      - name: Publish @iamrajjoshi/clip-schema
+      - name: Publish clipit-schema
         run: npm publish
         working-directory: packages/clip-schema
 
-      - name: Publish @iamrajjoshi/clip-cli
+      - name: Publish clipit
         run: npm publish
         working-directory: packages/clip-cli
