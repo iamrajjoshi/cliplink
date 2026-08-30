@@ -11,7 +11,7 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   external: ["sharp"],
-  noExternal: ["clipit-schema"],
+  noExternal: ["cliplink-schema"],
   onSuccess: async () => {
     const distPath = resolve("dist/index.js");
     const content = readFileSync(distPath, "utf8");

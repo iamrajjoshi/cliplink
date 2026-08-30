@@ -1,10 +1,10 @@
 {
-  "name": "clipit-schema",
+  "name": "cliplink-schema",
   "version": "0.1.0",
   "description": "Shared Zod schema for clip CLI and web app",
   "repository": {
     "type": "git",
-    "url": "https://github.com/iamrajjoshi/clipit.git"
+    "url": "https://github.com/iamrajjoshi/cliplink.git"
   },
   "type": "module",
   "exports": "./src/index.ts",
