@@ -127,7 +127,7 @@ The config file is written atomically (temp file + rename) so an interrupted wri
 
 ## Creating a Repository with `clip init`
 
-`clip init` creates a brand-new clip site repository on your GitHub account from the [`iamrajjoshi/clip`](https://github.com/iamrajjoshi/clip) template, so you can go from `clip login` to publishing clips without manually forking or cloning anything.
+`clip init` creates a brand-new clip site repository on your GitHub account from the [`iamrajjoshi/cliplink-template`](https://github.com/iamrajjoshi/cliplink-template) template, so you can go from `clip login` to publishing clips without manually forking or cloning anything.
 
 ```bash
 clip init
@@ -137,7 +137,7 @@ What happens:
 
 1. The CLI checks that you are logged in. If no token is stored, it exits with `Run \`clip login\` first.`
 2. It prompts for a repository name (default `clip`).
-3. It calls GitHub's "create from template" API (`POST /repos/iamrajjoshi/clip/generate`) with `{ name: <repo-name>, private: false }`, creating a **public** repository under your account that inherits the full Astro site structure, content directories, and deploy workflow.
+3. It calls GitHub's "create from template" API (`POST /repos/iamrajjoshi/cliplink-template/generate`) with `{ name: <repo-name>, private: false }`, creating a **public** repository under your account that inherits the full Astro site structure, content directories, and deploy workflow.
 4. On success, it **auto-configures `github.repo`** in [configuration](#configuration) to the new repo name, so the very next `clip <url>` publishes to it.
 5. It prints the new repository's URL.
 
@@ -351,7 +351,7 @@ If GitHub is unreachable, the CLI exits non-zero with `Could not connect to GitH
 | `clip config`                   | Show the current configuration (sensitive keys redacted).                                                                             |
 | `clip config get <key>`         | Print a config value (dot-notation supported, e.g. `github.branch`).                                                                  |
 | `clip config set <key> <value>` | Set a config value (dot-notation supported; only defined keys accepted).                                                              |
-| `clip init`                     | Create a new clip site repository from the `iamrajjoshi/clip` template and auto-configure `github.repo`. Requires `clip login` first. |
+| `clip init`                     | Create a new clip site repository from the `iamrajjoshi/cliplink-template` template and auto-configure `github.repo`. Requires `clip login` first. |
 | `clip <url>`                    | Clip a URL (link, tweet, or video) and publish it.                                                                                    |
 | `clip <path>`                   | Clip a local image file and publish it.                                                                                               |
 | `clip -`                        | Clip a note from stdin and publish it.                                                                                                |

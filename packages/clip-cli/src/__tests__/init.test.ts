@@ -329,7 +329,7 @@ describe("runInitCommand", () => {
     assert.equal(promptCalls.length, 1, "should prompt exactly once");
     const call = promptCalls[0];
     assert.ok(call);
-    assert.equal(call.default, TEMPLATE_REPO, "prompt default should be 'clip'");
+    assert.equal(call.default, TEMPLATE_REPO, "prompt default should be template repo name");
     // The API request should use the prompted name (which accepted the default).
     const req = requests[0];
     assert.ok(req);

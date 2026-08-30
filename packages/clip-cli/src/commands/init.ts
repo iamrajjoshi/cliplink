@@ -7,7 +7,7 @@ import type { GeneratedRepo } from "../github/git-data";
 
 /** Template repository the new clip site is generated from. */
 export const TEMPLATE_OWNER = "iamrajjoshi";
-export const TEMPLATE_REPO = "clip";
+export const TEMPLATE_REPO = "cliplink-template";
 
 export type RepoNamePromptFn = (options: { message: string; default?: string }) => Promise<string>;
 
@@ -22,7 +22,7 @@ export interface InitCommandOptions {
 
 /**
  * Run the `clip init` command: create a new GitHub repository from the
- * `iamrajjoshi/clip` template and auto-configure `github.repo` in config.
+ * `iamrajjoshi/cliplink-template` template and auto-configure `github.repo` in config.
  *
  * Flow:
  * 1. Check for a stored token. If none, exit with "Run `clip login` first."
