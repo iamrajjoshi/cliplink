@@ -4,6 +4,9 @@
   "version": "0.0.0",
   "packageManager": "pnpm@10.25.0",
   "scripts": {
+    "site:dev": "node scripts/serve-site.mjs",
+    "site:build": "node scripts/build-site.mjs",
+    "site:check": "node --check site/main.js && node --check site/theme.js && node --test scripts/*.test.mjs",
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "lint": "pnpm -r lint",

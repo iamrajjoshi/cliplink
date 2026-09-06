@@ -49,7 +49,7 @@ export async function runInitCommand(options?: InitCommandOptions): Promise<void
   // 2. Prompt for the repo name.
   const name = await promptRepoName({
     message: "Repository name:",
-    default: TEMPLATE_REPO,
+    default: "clip",
   });
 
   // 3. Create the repo from the template.

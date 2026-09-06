@@ -324,16 +324,16 @@ describe("runInitCommand", () => {
       keychain,
       configStore,
       createClient: createClientFactory(fetch),
-      promptRepoName: createPromptFn(TEMPLATE_REPO),
+      promptRepoName: createPromptFn("clip"),
     });
     assert.equal(promptCalls.length, 1, "should prompt exactly once");
     const call = promptCalls[0];
     assert.ok(call);
-    assert.equal(call.default, TEMPLATE_REPO, "prompt default should be template repo name");
+    assert.equal(call.default, "clip");
     // The API request should use the prompted name (which accepted the default).
     const req = requests[0];
     assert.ok(req);
-    assert.equal((req.bodyJson as { name: string }).name, TEMPLATE_REPO);
+    assert.equal((req.bodyJson as { name: string }).name, "clip");
   });
 
   it("handles existing repo name with 422 (VAL-INIT-005)", async () => {

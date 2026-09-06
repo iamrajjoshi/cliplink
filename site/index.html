@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="description"
+      content="Cliplink is a small CLI and Astro template for keeping links, notes, and images on a site of your own. Your clips live as Markdown in your GitHub repository."
+    />
+    <title>Cliplink — Good finds, kept close.</title>
+    <script src="./theme.js"></script>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link
+      rel="preload"
+      href="./fonts/gabarito-latin-variable.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./main.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header wrap">
+      <a class="wordmark" href="./" aria-label="Cliplink home">
+        <svg
+          class="clip-mark"
+          width="32"
+          height="32"
+          viewBox="0 0 32 32"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M27 4H16a12 12 0 0 0 0 24h4a8 8 0 0 0 0-16h-4a4 4 0 0 0 0 8"
+            stroke="currentColor"
+            stroke-width="4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        Cliplink
+      </a>
+      <nav class="header-nav" aria-label="Main navigation">
+        <a href="https://github.com/iamrajjoshi/cliplink-template">Template</a>
+        <a href="https://github.com/iamrajjoshi/cliplink">GitHub</a>
+        <button class="theme-toggle" type="button" aria-label="Switch to dark mode" hidden>
+          <svg width="21" height="21" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6" />
+            <path d="M12 3a9 9 0 0 1 0 18Z" fill="currentColor" />
+          </svg>
+        </button>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="wrap">
+          <div class="hero-heading">
+            <h1 id="hero-title">Good finds.<br />Kept close.</h1>
+            <div class="hero-copy">
+              <p>
+                That link you keep sending people. The thought you don’t want to lose. Put them on a
+                little site of your own.
+              </p>
+              <a class="button primary" href="#setup">Start your collection</a>
+              <p class="hero-footnote">A small CLI for a website you own.</p>
+            </div>
+          </div>
+
+          <div class="demo" aria-label="Interactive clip example">
+            <p class="demo-heading">Try a clip</p>
+            <div class="example-picker" role="group" aria-label="Choose an example" hidden>
+              <button type="button" data-example="link" aria-pressed="true">A link</button>
+              <button type="button" data-example="note" aria-pressed="false">A note</button>
+            </div>
+            <div class="sample-sheet">
+              <article class="sample-clip" id="sample-clip">
+                <div class="sample-title-block">
+                  <p class="sample-source" id="sample-source">developer.mozilla.org</p>
+                  <h2 id="sample-title">
+                    <a href="https://developer.mozilla.org/en-US/docs/Web/CSS"
+                      >CSS: Cascading Style Sheets</a
+                    >
+                  </h2>
+                </div>
+                <div class="sample-annotation">
+                  <p id="sample-body">
+                    For the days when I know what a property does, but not quite what it’s called.
+                  </p>
+                  <span class="sample-tag" id="sample-tag">Link + your note</span>
+                </div>
+              </article>
+            </div>
+            <div class="demo-bottom">
+              <div class="demo-command">
+                <code id="sample-command"
+                  >clip https://developer.mozilla.org/en-US/docs/Web/CSS</code
+                >
+              </div>
+              <div class="demo-save">
+                <p id="demo-status" role="status" aria-live="polite">Ready to keep.</p>
+                <button class="button save-button" id="save-example" type="button" hidden>
+                  <svg width="15" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path
+                      d="m20 11-8 8a5 5 0 0 1-7-7L15 2a3.5 3.5 0 0 1 5 5L10 17a2 2 0 0 1-3-3l8-8"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                    /></svg
+                  ><span>Clip it</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="story wrap" aria-labelledby="story-title">
+        <h2 id="story-title">Your clips,<br />on your site.</h2>
+        <div class="story-copy">
+          <p>
+            Save a URL with <code>clip</code>. It adds a Markdown file to your GitHub repo, where
+            you can edit the title, tags, or your own notes.
+          </p>
+          <p>
+            The template publishes your clips as a searchable website with an RSS feed. To change
+            how it looks, edit the Astro files and CSS.
+          </p>
+          <a class="text-link" href="https://github.com/iamrajjoshi/cliplink-template"
+            >Default template <span aria-hidden="true">↗</span></a
+          >
+        </div>
+      </section>
+
+      <section class="setup wrap" id="setup" aria-labelledby="setup-title">
+        <div class="section-heading">
+          <h2 id="setup-title">Make room for<br />your first find.</h2>
+          <p>
+            You’ll need Node.js 20+, Git,<br class="desktop-break" />
+            and a GitHub account.
+          </p>
+        </div>
+        <ol class="setup-steps">
+          <li>
+            <div class="step-copy">
+              <span class="step-number" aria-hidden="true">1</span>
+              <div>
+                <h3>Install and sign in</h3>
+                <p>Install the CLI, then connect your GitHub account in the browser.</p>
+              </div>
+            </div>
+            <div class="command-block">
+              <pre><code>npm install -g cliplink
+clip login</code></pre>
+              <button
+                type="button"
+                class="copy-button"
+                data-copy
+                aria-label="Copy install commands"
+                hidden
+              >
+                Copy
+              </button>
+            </div>
+          </li>
+          <li>
+            <div class="step-copy">
+              <span class="step-number" aria-hidden="true">2</span>
+              <div>
+                <h3>Start your collection</h3>
+                <p>
+                  Run <code>clip init</code> and enter <code>clip</code> as the repository name. It
+                  creates a <strong>public</strong> copy of the template. Replace
+                  <code>YOUR_USERNAME</code> below.
+                </p>
+              </div>
+            </div>
+            <div class="command-block">
+              <pre><code>clip init
+git clone https://github.com/YOUR_USERNAME/clip.git
+cd clip</code></pre>
+              <button
+                type="button"
+                class="copy-button"
+                data-copy
+                aria-label="Copy repository commands"
+                hidden
+              >
+                Copy
+              </button>
+            </div>
+          </li>
+          <li>
+            <div class="step-copy">
+              <span class="step-number" aria-hidden="true">3</span>
+              <div>
+                <h3>Put your name on it</h3>
+                <p>
+                  Edit <code>site.config.mjs</code> with your name, title, and description. In your
+                  repository’s <strong>Settings → Pages</strong>, choose
+                  <strong>GitHub Actions</strong>, then commit and push your configuration changes.
+                </p>
+                <a href="https://github.com/iamrajjoshi/cliplink-template#quick-start"
+                  >Full template setup <span aria-hidden="true">↗</span></a
+                >
+              </div>
+            </div>
+            <div class="setup-note">
+              <pre><code>owner: "Your name",
+title: "Clips",
+description: "Things worth keeping."</code></pre>
+              <p>
+                The Pages workflow supplies your site URL and path. A custom domain is optional.
+              </p>
+            </div>
+          </li>
+          <li>
+            <div class="step-copy">
+              <span class="step-number" aria-hidden="true">4</span>
+              <div>
+                <h3>Save something good</h3>
+                <p>
+                  From your cloned repository, run <code>clip</code> with a URL. Your entry is
+                  committed to GitHub, and the Pages workflow builds your site.
+                </p>
+              </div>
+            </div>
+            <div class="command-block">
+              <pre><code>clip https://developer.mozilla.org/en-US/docs/Web/CSS</code></pre>
+              <button
+                type="button"
+                class="copy-button"
+                data-copy
+                aria-label="Copy first clip command"
+                hidden
+              >
+                Copy
+              </button>
+            </div>
+          </li>
+        </ol>
+        <p class="setup-footnote">
+          These commands work with the published CLI. Keep using it from inside your cloned
+          repository.
+          <a href="https://github.com/iamrajjoshi/cliplink#get-started"
+            >More in the README <span aria-hidden="true">↗</span></a
+          >
+        </p>
+        <p class="sr-only" id="copy-status" role="status" aria-live="polite"></p>
+      </section>
+
+      <section class="questions wrap" aria-labelledby="questions-title">
+        <h2 id="questions-title">Before you<br />start clipping.</h2>
+        <div class="question-list">
+          <details>
+            <summary>What can I save?<span aria-hidden="true">+</span></summary>
+            <div>
+              <p>
+                Links, notes, images, tweets, and video references. Cliplink fetches supported
+                metadata and assets; it isn’t a full archive of every page or a video downloader.
+              </p>
+              <a href="https://github.com/iamrajjoshi/cliplink#save-something"
+                >See the commands <span aria-hidden="true">↗</span></a
+              >
+            </div>
+          </details>
+          <details>
+            <summary>Is my collection private?<span aria-hidden="true">+</span></summary>
+            <div>
+              <p>
+                No. The default setup creates a public GitHub repository and a public website. Don’t
+                clip private documents, credentials, or anything you don’t want to publish.
+              </p>
+            </div>
+          </details>
+          <details>
+            <summary>Can I change the design?<span aria-hidden="true">+</span></summary>
+            <div>
+              <p>
+                Yes. The template is a static Astro site with a small configuration file, plain
+                styles, and editable components. No account with Cliplink is needed. Template
+                updates aren’t synced into your repository automatically.
+              </p>
+            </div>
+          </details>
+          <details>
+            <summary>What does it cost to run?<span aria-hidden="true">+</span></summary>
+            <div>
+              <p>
+                Cliplink doesn’t charge a subscription. The default public-repository setup can use
+                GitHub Pages; GitHub’s limits and terms apply. A custom domain is optional and
+                purchased separately.
+              </p>
+              <a
+                href="https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits"
+                >GitHub Pages limits <span aria-hidden="true">↗</span></a
+              >
+            </div>
+          </details>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer wrap">
+      <div class="footer-links">
+        <p>Made by <a class="author-link" href="https://rajjoshi.me/">Raj Joshi</a></p>
+        <a href="https://github.com/iamrajjoshi/cliplink/issues">Feedback</a>
+      </div>
+      <!-- commit:start -->
+      <a class="commit-link" href="https://github.com/iamrajjoshi/cliplink">Source</a>
+      <!-- commit:end -->
+    </footer>
+  </body>
+</html>

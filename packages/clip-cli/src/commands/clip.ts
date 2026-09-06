@@ -7,7 +7,7 @@ import { getDefaultTagsForUrl } from "../default-tags";
 import { detectInput } from "../detect";
 import { detectMode, type PublishMode } from "../mode";
 import { serializeClip } from "../markdown";
-import { resolveProjectPaths } from "../paths";
+import { projectPathsFromRoot, resolveProjectPaths } from "../paths";
 import { collectPrompts } from "../prompts";
 import { createPublisher } from "../publishers";
 import type { Publisher, PublishResult, Asset, PublishParams } from "../publishers/types";
@@ -192,9 +192,18 @@ export interface PreparedClip {
  * Keychain, config files, or network.
  */
 export interface ClipCommandDeps {
+  cwd?: string;
   keychain?: { read(): Promise<string | null> };
   configStore?: { read(): Promise<ClipConfig> };
   createPublisherFn?: typeof createPublisher;
+}
+
+async function readToken(deps?: ClipCommandDeps): Promise<string | null> {
+  try {
+    return await (deps?.keychain ?? new KeychainStore()).read();
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -210,17 +219,9 @@ export async function executePublishing(
   options: Pick<CliOptions, "dryRun" | "noPush" | "local">,
   repoRoot: string,
   deps?: ClipCommandDeps,
+  resolvedToken?: string | null,
 ): Promise<PublishResult> {
-  // Check for token to determine publishing mode (local vs remote)
-  let token: string | null = null;
-  try {
-    const keychain = deps?.keychain ?? new KeychainStore();
-    token = await keychain.read();
-  } catch {
-    // If token check fails, default to local mode
-    token = null;
-  }
-
+  const token = resolvedToken === undefined ? await readToken(deps) : resolvedToken;
   const mode: PublishMode = detectMode({ local: options.local, token });
 
   // --no-push is only meaningful in local mode; warn in remote mode
@@ -273,7 +274,7 @@ export async function executePublishing(
 /** Run the clip command: detect → scrape → prompt → validate → publish. */
 export async function runClipCommand(args: string[], deps?: ClipCommandDeps): Promise<void> {
   const options = parseArgs(args);
-  const invocationCwd = process.env.INIT_CWD ?? process.cwd();
+  const invocationCwd = deps?.cwd ?? process.env.INIT_CWD ?? process.cwd();
   const cliDir = path.dirname(fileURLToPath(import.meta.url));
 
   if (options.help || !options.input) {
@@ -281,15 +282,18 @@ export async function runClipCommand(args: string[], deps?: ClipCommandDeps): Pr
     return;
   }
 
+  const token = await readToken(deps);
+  const mode = detectMode({ local: options.local, token });
   const explicitRepo = options.repo ?? process.env.CLIP_REPO;
-  const paths = explicitRepo
-    ? await resolveProjectPaths({
-        start: path.resolve(expandHomeDirectory(explicitRepo)),
-      })
-    : await resolveProjectPaths({
-        start: cliDir,
-        fallbackStarts: [invocationCwd],
-      });
+  const repoStart = explicitRepo ? path.resolve(expandHomeDirectory(explicitRepo)) : invocationCwd;
+  // Remote publishers need repository-relative paths, not a local checkout.
+  const paths =
+    mode === "remote"
+      ? projectPathsFromRoot(repoStart)
+      : await resolveProjectPaths({
+          start: explicitRepo ? repoStart : cliDir,
+          fallbackStarts: explicitRepo ? [] : [invocationCwd],
+        });
   const detection = await detectInput(options.input, invocationCwd);
   const clipsAssetRelDir = path.relative(paths.repoRoot, paths.clipsAssetDir);
   const clippedAt = new Date();
@@ -467,5 +471,6 @@ export async function runClipCommand(args: string[], deps?: ClipCommandDeps): Pr
     options,
     paths.repoRoot,
     deps,
+    token,
   );
 }

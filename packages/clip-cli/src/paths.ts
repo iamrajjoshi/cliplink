@@ -33,7 +33,7 @@ async function findWorkspaceRoot(start: string) {
   return undefined;
 }
 
-function projectPathsFromRoot(repoRoot: string): ProjectPaths {
+export function projectPathsFromRoot(repoRoot: string): ProjectPaths {
   return {
     repoRoot,
     contentDir: path.join(repoRoot, "apps/web/src/content/clips"),
