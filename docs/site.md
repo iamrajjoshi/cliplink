@@ -29,13 +29,15 @@ The build copies the page and assets into `dist/site/` and inserts a seven-chara
 
 ## Publish
 
-No deployment happens merely because these files are present. After reviewing and pushing them:
+The landing page targets **https://cliplink.dev/**. The workflow deploys site, script, and workflow changes pushed to `main`; it also supports manual runs. Domain setup happens once:
 
-1. In this repository's **Settings → Pages**, select **GitHub Actions** as the source.
-2. Run **Deploy Cliplink landing page** from Actions. It validates, builds, and uploads only `dist/site/`.
-3. Use the successful run's `page_url` as the actual public URL. No custom domain is assumed.
+1. In this repository's **Settings → Pages**, select **GitHub Actions** as the source and set the custom domain to `cliplink.dev` before pointing DNS at GitHub.
+2. Configure Cloudflare DNS for GitHub Pages, then enable **Enforce HTTPS** in Pages once its certificate is ready.
+3. Run **Deploy Cliplink landing page** from Actions if no deployment has run yet. It validates, builds, and uploads only `dist/site/`. Confirm the successful run's `page_url` and test `https://cliplink.dev/` before treating the launch as complete.
 
-The workflow is manual. The page's assets use relative paths, so GitHub's repository subpath works. Other static hosts should run `pnpm site:build` and serve `dist/site/`. Keep its `fonts/` folder and license notice together. Opening the source HTML directly still works, with a **Source** link instead of a stamped commit.
+GitHub stores the custom domain in Pages settings. This custom Actions workflow doesn't need a `CNAME` file; GitHub ignores that file for this publishing method. See [GitHub's domain setup instructions](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site).
+
+The page's canonical and Open Graph URLs point to `https://cliplink.dev/`. Assets use relative paths, so previews and GitHub's repository subpath still work. Other static hosts should run `pnpm site:build` and serve `dist/site/`. Keep its `fonts/` folder and license notice together. Opening the source HTML directly still works, with a **Source** link instead of a stamped commit.
 
 Publish the updated template before the landing page: the setup text describes the new `site.config.mjs` and base-path-aware Pages workflow. The landing's CLI examples deliberately retain the clone step required by npm 0.1.1; the no-clone fix in this repository is unreleased. Publishing this page does **not** publish a new npm version.
 

@@ -47,4 +47,4 @@ Saved content, schema, asset paths, and existing permalinks are preserved. The t
 
 Unused React effects were removed from the two Astro sites. Neither feed needs an animation library. The landing is static HTML/CSS with small scripts, not another app framework. Gabarito is self-hosted in the public pair; Bricolage is self-hosted in the personal collection. Their OFL notices stay alongside the font files. No license has been invented for the Cliplink CLI.
 
-The personal collection is deployed. The public template and landing remain previews pending review. This public-pair redesign does not change DNS or publish an npm version. Release steps are documented in [the landing-page guide](site.md).
+The personal collection is deployed, and the public template and landing have passed review. The landing now targets `https://cliplink.dev/`; domain and Pages setup still need verification during launch. Publishing the landing doesn't publish an npm version. Release steps are documented in [the landing-page guide](site.md).

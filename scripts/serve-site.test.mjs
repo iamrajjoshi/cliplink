@@ -16,6 +16,8 @@ test("serves landing and local assets without runtime dependencies", async () =>
   assert.equal(page.status, 200);
   const html = await page.text();
   assert.match(html, /Good finds\.<br\s*\/>Kept close\./);
+  assert.match(html, /<link rel="canonical" href="https:\/\/cliplink\.dev\/"\s*\/>/);
+  assert.match(html, /<meta property="og:url" content="https:\/\/cliplink\.dev\/"\s*\/>/);
   assert.doesNotMatch(html, /commit:start/);
   const sha = getCommitSha();
   if (sha) assert.ok(html.includes(`href="https://github.com/iamrajjoshi/cliplink/commit/${sha}"`));

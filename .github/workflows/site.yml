@@ -1,6 +1,12 @@
 name: Deploy Cliplink landing page
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "site/**"
+      - "scripts/**"
+      - ".github/workflows/site.yml"
   workflow_dispatch:
 
 permissions:
