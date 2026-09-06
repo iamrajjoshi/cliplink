@@ -29,7 +29,7 @@ export async function scrapeVideo(url: string): Promise<VideoScrapeResult> {
 
   const response = await fetch(endpoint, {
     headers: {
-      "user-agent": "clip.rajjoshi.me/1.0 (+https://clip.rajjoshi.me)",
+      "user-agent": "cliplink/1.0 (+https://cliplink.dev/)",
     },
   });
 

@@ -1,4 +1,4 @@
-export const HELP_TEXT = `clip — clip web content into markdown for clip.rajjoshi.me
+export const HELP_TEXT = `clip — save links, images, and notes to your collection
 
 usage:
   clip <url | path | ->          clip a URL, local image file, or stdin note

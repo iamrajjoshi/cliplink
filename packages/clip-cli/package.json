@@ -6,7 +6,8 @@
     "url": "https://github.com/iamrajjoshi/cliplink.git"
   },
   "type": "module",
-  "description": "CLI for clipping web content into markdown for clip.rajjoshi.me",
+  "description": "Save links, images, and notes as Markdown in your own GitHub repository",
+  "homepage": "https://cliplink.dev/",
   "bin": {
     "clip": "dist/index.js"
   },

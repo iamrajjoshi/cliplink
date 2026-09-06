@@ -90,7 +90,7 @@ export async function readStdin() {
 export async function fetchBuffer(url: string) {
   const response = await fetch(url, {
     headers: {
-      "user-agent": "clip.rajjoshi.me/1.0 (+https://clip.rajjoshi.me)",
+      "user-agent": "cliplink/1.0 (+https://cliplink.dev/)",
     },
   });
 

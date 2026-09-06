@@ -2,7 +2,7 @@
 
 Save a link, image, video reference, X post, or note to a Markdown file in your own GitHub repository. The [Cliplink template](https://github.com/iamrajjoshi/cliplink-template) turns those files into a static website with a feed, permalinks, and RSS.
 
-The npm package is `cliplink`; the command is `clip`. See [Raj's clips](https://clip.rajjoshi.me) for a working collection. The product landing page lives in `site/`, targets [cliplink.dev](https://cliplink.dev/), and has its own [preview and deployment instructions](docs/site.md).
+The npm package is `cliplink`; the command is `clip`. See [Raj's clips](https://clips.rajjoshi.me/) for a working collection. The product landing page lives in `site/`, targets [cliplink.dev](https://cliplink.dev/), and has its own [preview and deployment instructions](docs/site.md).
 
 ## Get started
 

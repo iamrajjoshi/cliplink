@@ -28,7 +28,7 @@ export async function scrapeLink(url: string): Promise<LinkScrapeResult> {
   try {
     const response = await fetch(url, {
       headers: {
-        "user-agent": "clip.rajjoshi.me/1.0 (+https://clip.rajjoshi.me)",
+        "user-agent": "cliplink/1.0 (+https://cliplink.dev/)",
       },
     });
 
