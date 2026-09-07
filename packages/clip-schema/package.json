@@ -29,6 +29,6 @@
     "access": "public"
   },
   "dependencies": {
-    "zod": "^3.25.76"
+    "zod": "^4.5.4"
   }
 }
