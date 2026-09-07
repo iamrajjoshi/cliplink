@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cliplink"
+  short_description: "Save and organize clips with the Cliplink CLI"
+  default_prompt: "Use $cliplink to save this item to my collection."

@@ -15,7 +15,8 @@
   <a href="https://cliplink.dev/">Website</a> ·
   <a href="https://github.com/iamrajjoshi/cliplink-template">Default template</a> ·
   <a href="https://clips.rajjoshi.me/">Example collection</a> ·
-  <a href="docs/cli.md">CLI guide</a>
+  <a href="docs/cli.md">CLI guide</a> ·
+  <a href="#use-with-an-agent">Agent skill</a>
 </p>
 
 <p align="center">
@@ -88,6 +89,24 @@ clip https://developer.mozilla.org/en-US/docs/Web/CSS --dry-run
 
 A dry run can fetch metadata, but it doesn't write files or publish. Video clips save a reference and an available thumbnail; the video stays at its source.
 
+## Use with an agent
+
+The [Cliplink skill](skills/cliplink/SKILL.md) teaches your coding agent how to save clips, add metadata, preview Markdown, and check the publishing destination.
+
+Install it with the [Skills CLI](https://github.com/vercel-labs/skills):
+
+```sh
+npx skills add iamrajjoshi/cliplink --skill cliplink
+```
+
+Choose your agent and installation scope when prompted. You'll still need the Cliplink CLI installed and your collection configured.
+
+Then ask your agent:
+
+> Save this link to my Cliplink collection with the tags css and reference. Preview the Markdown first.
+
+The skill covers setup and failed-save recovery too, including the difference between previewing, making a local commit, and publishing to GitHub.
+
 ## Your files, your site
 
 ```text
@@ -108,6 +127,7 @@ GitHub API publishing doesn't refresh your checkout. It checks the remote paths 
 | Looking for                                | Start here                                                                     |
 | ------------------------------------------ | ------------------------------------------------------------------------------ |
 | Flags, authentication, and troubleshooting | [CLI guide](docs/cli.md)                                                       |
+| Saving clips with a coding agent           | [Agent skill](skills/cliplink/SKILL.md)                                        |
 | Your collection's design and deployment    | [Template setup](https://github.com/iamrajjoshi/cliplink-template#quick-start) |
 | Local development and checks               | [Contributing](CONTRIBUTING.md)                                                |
 | The Cliplink product website               | [Landing page development](docs/site.md)                                       |
