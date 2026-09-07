@@ -1,15 +1,29 @@
 {
   "name": "cliplink-schema",
-  "version": "0.1.1",
+  "version": "0.1.2",
+  "license": "MIT",
+  "author": "Raj Joshi (https://rajjoshi.me/)",
   "description": "Shared Zod schema for clip CLI and web app",
   "repository": {
     "type": "git",
-    "url": "https://github.com/iamrajjoshi/cliplink.git"
+    "url": "git+https://github.com/iamrajjoshi/cliplink.git",
+    "directory": "packages/clip-schema"
   },
+  "homepage": "https://cliplink.dev/",
+  "bugs": {
+    "url": "https://github.com/iamrajjoshi/cliplink/issues"
+  },
+  "keywords": [
+    "cliplink",
+    "schema",
+    "zod",
+    "markdown"
+  ],
   "type": "module",
   "exports": "./src/index.ts",
   "files": [
-    "src"
+    "src",
+    "LICENSE"
   ],
   "publishConfig": {
     "access": "public"

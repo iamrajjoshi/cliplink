@@ -6,6 +6,8 @@ Install the npm package as `cliplink`; run it with `clip`. See the [quick start]
 
 ## Release status
 
+**0.2.1** adds MIT licensing, package notices, and an image-processing dependency security update. Commands and flags match 0.2.0. See the [changelog](../CHANGELOG.md) for release details.
+
 **0.2.0** adds metadata flags and remote publishing without a local clone. Run `clip login`, then `clip init` or configure an existing collection. `clip init` accepts any available repository name and remembers it; the default is `clip`.
 
 Use Node.js 24 (recommended). Supported versions are Node.js 20.17+, 22.13+, or 23.5 and later; Node.js 21 and earlier 22.x releases aren't supported by the prompt dependencies. Upgrade an older CLI with `npm install --global cliplink@latest`.

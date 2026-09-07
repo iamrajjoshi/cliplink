@@ -1,0 +1,22 @@
+name: Feature request
+description: Suggest a change to Cliplink.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: Describe the situation and what gets in your way.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would help?
+      description: A command example or a sketch is useful. Leave out private content.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Have you tried another approach?
+      description: Optional. Tell us about a workaround or another way this could work.

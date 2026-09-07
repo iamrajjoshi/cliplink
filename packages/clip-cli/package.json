@@ -1,10 +1,24 @@
 {
   "name": "cliplink",
-  "version": "0.2.0",
+  "version": "0.2.1",
+  "license": "MIT",
+  "author": "Raj Joshi (https://rajjoshi.me/)",
   "repository": {
     "type": "git",
-    "url": "https://github.com/iamrajjoshi/cliplink.git"
+    "url": "git+https://github.com/iamrajjoshi/cliplink.git",
+    "directory": "packages/clip-cli"
   },
+  "bugs": {
+    "url": "https://github.com/iamrajjoshi/cliplink/issues"
+  },
+  "keywords": [
+    "cli",
+    "bookmarks",
+    "markdown",
+    "github",
+    "clips",
+    "rss"
+  ],
   "type": "module",
   "description": "Save links, images, and notes as Markdown in your own GitHub repository",
   "homepage": "https://cliplink.dev/",
@@ -12,7 +26,9 @@
     "clip": "dist/index.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES"
   ],
   "engines": {
     "node": "^20.17.0 || ^22.13.0 || >=23.5.0"
@@ -29,10 +45,10 @@
     "test": "tsx --test src/__tests__/*.test.ts"
   },
   "dependencies": {
-    "cliplink-schema": "^0.1.0",
+    "cliplink-schema": "^0.1.2",
     "@inquirer/prompts": "^8.4.2",
     "node-html-parser": "^7.1.0",
-    "sharp": "^0.34.5",
+    "sharp": "^0.35.4",
     "yaml": "^2.8.3"
   },
   "devDependencies": {

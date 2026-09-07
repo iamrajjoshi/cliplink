@@ -22,6 +22,9 @@
   <a href="https://www.npmjs.com/package/cliplink">
     <img src="https://img.shields.io/npm/v/cliplink?style=flat-square&amp;labelColor=352d31&amp;color=9d274b" alt="Latest version on npm" />
   </a>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/badge/license-MIT-9d274b?style=flat-square&amp;labelColor=352d31" alt="MIT license" />
+  </a>
 </p>
 
 Cliplink saves links, images, X posts, video references, and notes as Markdown in your GitHub repository. Add a note about why you kept something; the [Astro template](https://github.com/iamrajjoshi/cliplink-template) gives your collection a searchable feed, individual pages, and RSS.
@@ -114,6 +117,12 @@ GitHub API publishing doesn't refresh your checkout. It checks the remote paths 
 Bug reports and pull requests are welcome. Include the command you ran, your CLI and Node versions, and what you expected to happen. Leave tokens and private content out of reports.
 
 See [Contributing](CONTRIBUTING.md) for the development setup, or [open an issue](https://github.com/iamrajjoshi/cliplink/issues).
+
+For questions, see [Support](SUPPORT.md). Please follow the [Code of Conduct](CODE_OF_CONDUCT.md), and send sensitive reports through the [security policy](SECURITY.md).
+
+## License
+
+[MIT](LICENSE), copyright 2026 Raj Joshi. Bundled dependencies and fonts retain their [third-party licenses](THIRD_PARTY_NOTICES.md).
 
 <p align="center">
   Made by <a href="https://rajjoshi.me/">Raj Joshi</a>

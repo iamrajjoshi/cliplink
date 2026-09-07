@@ -30,3 +30,7 @@ clip - --tag notes < note.md
 ```
 
 Add `--dry-run` to print the Markdown without writing files or publishing. Tags and notes apply to all clip kinds; title applies to links and videos, description to links, and alt text to images. Run `clip --help` for available commands and flags.
+
+## License and support
+
+[MIT](LICENSE). The bundle also includes Zod's [license notice](THIRD_PARTY_NOTICES). Read the [contribution guide](https://github.com/iamrajjoshi/cliplink/blob/main/CONTRIBUTING.md) or [report a bug](https://github.com/iamrajjoshi/cliplink/issues). For sensitive reports, follow the [security policy](https://github.com/iamrajjoshi/cliplink/blob/main/SECURITY.md).

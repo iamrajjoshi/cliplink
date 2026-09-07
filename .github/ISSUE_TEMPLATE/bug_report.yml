@@ -1,0 +1,53 @@
+name: Bug report
+description: Report a problem with the CLI, schema, or Cliplink website.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For suspected vulnerabilities, use [private security reporting](https://github.com/iamrajjoshi/cliplink/security/advisories/new).
+        Remove tokens, private URLs, and personal content from commands, logs, and screenshots.
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where did this happen?
+      options:
+        - Cliplink CLI
+        - Shared schema
+        - Cliplink landing page
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versions and environment
+      description: Include clip --version, node --version, and your operating system. For the website, include your browser and the footer commit if available.
+    validations:
+      required: true
+  - type: dropdown
+    id: publishing
+    attributes:
+      label: Publishing mode
+      options:
+        - GitHub API
+        - Local Git (--local)
+        - Not applicable or unsure
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How can we reproduce it?
+      description: Include the command and a small example. Replace private content with placeholders.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened?
+      description: Include relevant error output or a screenshot after removing sensitive information.
+    validations:
+      required: true

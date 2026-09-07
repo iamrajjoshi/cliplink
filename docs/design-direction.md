@@ -45,6 +45,6 @@ Setup also separates repository creation from hosting. `clip init` creates a pub
 
 Saved content, schema, asset paths, and existing permalinks are preserved. The template's fictional examples stay outside the real collection, RSS, and search index. The site doesn't claim to download videos or archive whole articles.
 
-Unused React effects were removed from the two Astro sites. Neither feed needs an animation library. The landing is static HTML/CSS with small scripts, not another app framework. Gabarito is self-hosted in the public pair; Bricolage is self-hosted in the personal collection. Their OFL notices stay alongside the font files. No license has been invented for the Cliplink CLI.
+Unused React effects were removed from the two Astro sites. Neither feed needs an animation library. The landing uses static HTML/CSS with small scripts. Gabarito is self-hosted in the public pair; Bricolage is self-hosted in the personal collection. Their OFL notices stay alongside the font files. Cliplink uses [MIT](../LICENSE), with separate [third-party notices](../THIRD_PARTY_NOTICES.md).
 
-The personal collection is deployed, and the public template and landing have passed review. The landing now targets `https://cliplink.dev/`; domain and Pages setup still need verification during launch. Publishing the landing doesn't publish an npm version. Release steps are documented in [the landing-page guide](site.md).
+The personal collection is deployed, and the public template and landing have passed review. The landing is live at `https://cliplink.dev/` through GitHub Pages. Publishing the landing doesn't publish an npm version. Release steps are documented in [the landing-page guide](site.md).

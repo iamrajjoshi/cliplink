@@ -40,6 +40,7 @@ pnpm test
 pnpm check
 pnpm lint
 pnpm build
+pnpm package:check
 pnpm format:check
 ```
 
@@ -58,3 +59,11 @@ Use `pnpm site:dev` to preview the landing page at `http://127.0.0.1:4333/`. See
 Keep the change focused and explain what it fixes. Add tests when you change CLI behavior; when you change a command or default, update its documentation too. Check both GitHub API and local Git publishing when touching shared code.
 
 For a bug report, include the CLI and Node versions, the command you ran, and the error output with tokens and private content removed. A small reproducible example helps more than a full checkout.
+
+Follow the [Code of Conduct](CODE_OF_CONDUCT.md). Please use the [private reporting route](SECURITY.md) for vulnerabilities and keep ordinary questions in [Support](SUPPORT.md).
+
+## Licensing and releases
+
+Contributions to this repository use the [MIT license](LICENSE). If you add third-party code or assets, preserve their licenses and update [the notices](THIRD_PARTY_NOTICES.md). Each npm package includes a copy of the root license; `pnpm package:check` verifies those copies and the files that will ship.
+
+For a release, update only the packages that changed and add a changelog entry. Run the checks above, including the package check after building, before tagging `v<cliplink-version>`. The tag starts the npm workflow through GitHub's trusted publishing; it skips package versions already on npm. See [the changelog](CHANGELOG.md) for released versions.

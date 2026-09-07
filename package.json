@@ -2,11 +2,13 @@
   "name": "clip-cli",
   "private": true,
   "version": "0.0.0",
+  "license": "MIT",
   "packageManager": "pnpm@10.25.0",
   "scripts": {
     "site:dev": "node scripts/serve-site.mjs",
     "site:build": "node scripts/build-site.mjs",
     "site:check": "node --check site/main.js && node --check site/theme.js && node --test scripts/*.test.mjs",
+    "package:check": "node scripts/check-packages.mjs",
     "build": "pnpm -r build",
     "test": "pnpm -r test",
     "lint": "pnpm -r lint",
