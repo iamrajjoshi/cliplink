@@ -110,7 +110,7 @@
                 >
               </div>
               <div class="demo-save">
-                <p id="demo-status" role="status" aria-live="polite">Ready to keep.</p>
+                <p id="demo-status" class="sr-only" role="status" aria-live="polite"></p>
                 <button class="button save-button" id="save-example" type="button" hidden>
                   <svg width="15" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path
@@ -146,7 +146,7 @@
 
       <section class="setup wrap" id="setup" aria-labelledby="setup-title">
         <div class="section-heading">
-          <h2 id="setup-title">Make room for<br />your first find.</h2>
+          <h2 id="setup-title">How to get started</h2>
           <p>
             You’ll need Node.js 20+, Git,<br class="desktop-break" />
             and a GitHub account.
@@ -181,16 +181,16 @@ clip login</code></pre>
               <div>
                 <h3>Start your collection</h3>
                 <p>
-                  Run <code>clip init</code> and enter <code>clip</code> as the repository name. It
-                  creates a <strong>public</strong> copy of the template. Replace
-                  <code>YOUR_USERNAME</code> below.
+                  Run <code>clip init</code> and choose a repository name. It creates a
+                  <strong>public</strong> repository and remembers your choice. Replace
+                  <code>YOUR_USERNAME</code> and <code>YOUR_REPO</code> below.
                 </p>
               </div>
             </div>
             <div class="command-block">
               <pre><code>clip init
-git clone https://github.com/YOUR_USERNAME/clip.git
-cd clip</code></pre>
+git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git
+cd YOUR_REPO</code></pre>
               <button
                 type="button"
                 class="copy-button"
@@ -316,11 +316,11 @@ description: "Things worth keeping."</code></pre>
     <footer class="site-footer wrap">
       <div class="footer-links">
         <p>Made by <a class="author-link" href="https://rajjoshi.me/">Raj Joshi</a></p>
+        <!-- commit:start -->
+        <a class="commit-link" href="https://github.com/iamrajjoshi/cliplink">Source</a>
+        <!-- commit:end -->
         <a href="https://github.com/iamrajjoshi/cliplink/issues">Feedback</a>
       </div>
-      <!-- commit:start -->
-      <a class="commit-link" href="https://github.com/iamrajjoshi/cliplink">Source</a>
-      <!-- commit:end -->
     </footer>
   </body>
 </html>

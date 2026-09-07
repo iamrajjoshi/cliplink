@@ -35,7 +35,7 @@ const examples = {
     title: "Leave a little room to wander",
     body: "The best thing I read today was three links away from the thing I was looking for.",
     tag: "A note in your collection",
-    command: "printf 'Leave a little room to wander.\\n' | clip - --local",
+    command: "clip - < note.md",
   },
 };
 const picker = document.querySelector(".example-picker");
@@ -67,7 +67,7 @@ picker.addEventListener("click", (event) => {
   sampleSheet.classList.remove("is-saved");
   saveButton.removeAttribute("aria-disabled");
   saveButton.querySelector("span").textContent = "Clip it";
-  demoStatus.textContent = "Ready to keep.";
+  demoStatus.textContent = "";
 });
 saveButton.addEventListener("click", () => {
   if (saveButton.getAttribute("aria-disabled") === "true") return;

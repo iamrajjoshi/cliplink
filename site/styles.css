@@ -182,13 +182,13 @@ code {
 .hero-heading {
   display: grid;
   grid-template-columns: 1.5fr 1fr;
-  align-items: end;
+  align-items: start;
   gap: 64px;
   margin-bottom: 56px;
 }
 h1 {
   font-size: clamp(64px, 8.4vw, 112px);
-  letter-spacing: -0.065em;
+  letter-spacing: -0.02em;
   line-height: 0.94;
 }
 .hero-copy {
@@ -331,7 +331,6 @@ h1 {
   justify-content: space-between;
   gap: 24px;
   padding-top: 20px;
-  border-top: 1px solid var(--line);
 }
 .demo-command {
   min-width: 0;
@@ -343,12 +342,7 @@ h1 {
 .demo-save {
   display: flex;
   align-items: center;
-  gap: 20px;
   flex: none;
-}
-.demo-save p {
-  font-size: 13px;
-  color: var(--ink);
 }
 .save-button {
   min-height: 44px;
@@ -393,7 +387,6 @@ h2 {
 }
 .setup {
   padding-top: 56px;
-  border-top: 1px solid var(--line);
   scroll-margin-top: 24px;
 }
 .section-heading {
@@ -418,7 +411,6 @@ h2 {
   align-items: start;
   gap: 80px;
   padding-block: 32px;
-  border-top: 1px solid var(--line);
 }
 .step-copy {
   display: flex;
@@ -487,7 +479,6 @@ pre code {
 }
 .setup-note {
   padding: 4px 0 0 22px;
-  border-left: 2px solid var(--accent);
   min-width: 0;
 }
 .setup-note pre {
@@ -519,11 +510,8 @@ pre code {
   gap: 80px;
   padding-block: 100px 88px;
 }
-.question-list {
+.question-list details + details {
   border-top: 1px solid var(--line);
-}
-details {
-  border-bottom: 1px solid var(--line);
 }
 summary {
   display: flex;
@@ -561,19 +549,23 @@ details a {
   font-size: 14px;
 }
 .site-footer {
-  border-top: 1px solid var(--line);
   padding-block: 24px 32px;
   font-size: 14px;
   color: var(--muted);
   text-align: center;
 }
 .footer-links {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  margin-bottom: 24px;
+  gap: 16px;
   text-align: left;
+}
+.footer-links p {
+  white-space: nowrap;
+}
+.footer-links > a:last-child {
+  justify-self: end;
 }
 .site-footer a {
   display: inline-flex;
@@ -618,12 +610,6 @@ details a {
   .setup-steps li,
   .questions {
     gap: 40px;
-  }
-  .demo-save {
-    gap: 12px;
-  }
-  .demo-save p {
-    max-width: 95px;
   }
 }
 @media (max-width: 680px) {
@@ -697,10 +683,7 @@ details a {
     font-size: 13px;
   }
   .demo-save {
-    justify-content: space-between;
-  }
-  .demo-save p {
-    max-width: none;
+    justify-content: flex-end;
   }
   .story,
   .questions {
@@ -740,6 +723,7 @@ details a {
     font-size: 36px;
   }
   .footer-links {
+    gap: 8px;
     font-size: 13px;
   }
 }
