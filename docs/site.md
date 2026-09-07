@@ -39,7 +39,7 @@ GitHub stores the custom domain in Pages settings. This custom Actions workflow 
 
 The page's canonical and Open Graph URLs point to `https://cliplink.dev/`. Assets use relative paths, so previews and GitHub's repository subpath still work. Other static hosts should run `pnpm site:build` and serve `dist/site/`. Keep its `fonts/` folder and license notice together. Opening the source HTML directly still works, with a **Source** link instead of a stamped commit.
 
-Publish the updated template before the landing page: the setup text describes the new `site.config.mjs` and base-path-aware Pages workflow. The landing's CLI examples deliberately retain the clone step required by npm 0.1.1; the no-clone fix in this repository is unreleased. Publishing this page does **not** publish a new npm version.
+Publish the updated template before changing setup instructions that depend on it. The landing keeps a clone step for editing `site.config.mjs`; Cliplink 0.2.0 can publish remotely without a clone after login and configuration. Publishing the landing page and publishing to npm use separate workflows.
 
 ## Editing
 

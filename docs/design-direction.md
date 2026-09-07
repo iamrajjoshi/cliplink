@@ -37,7 +37,7 @@ This is a design judgment, not a claim that one palette converts better than ano
 
 The source audit found hardcoded personal identity in the public template, a missing general-purpose site configuration, and root-relative assets that would break under a GitHub Pages project path. The template now has a single configuration file and base-aware rendering, feeds, social images, and Markdown assets.
 
-The CLI audit found that remote mode still resolved a local workspace before choosing its publisher. The source fix now chooses the mode first; regression tests cover remote publishing without a checkout and existing local modes. These changes are not yet released to npm, so onboarding keeps the published version's clone step.
+The CLI audit found that remote mode resolved a local workspace before choosing its publisher. Cliplink 0.2.0 chooses the mode first; regression tests cover remote publishing without a checkout and existing local modes. Onboarding keeps a clone step for customizing the site.
 
 Setup also separates repository creation from hosting. `clip init` creates a public repository; the reader still selects GitHub Actions in Pages and pushes configuration. This follows [GitHub's custom-workflow model](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages), rather than implying the CLI configures hosting itself.
 

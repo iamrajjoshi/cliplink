@@ -22,6 +22,11 @@ export type CliOptions = {
   noPush: boolean;
   help: boolean;
   local: boolean;
+  tags: string[];
+  title?: string;
+  description?: string;
+  alt?: string;
+  note?: string;
   repo?: string;
   input?: string;
 };

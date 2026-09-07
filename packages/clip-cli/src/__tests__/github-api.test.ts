@@ -132,7 +132,7 @@ function makeAsset(overrides: Partial<Asset> = {}): Asset {
 
 /**
  * Creates a mock fetch handler that responds to the full Git Data flow:
- * getRef → getCommit → createBlob(s) → createTree → createCommit → updateRef.
+ * getRef → getCommit → getTree → createBlob(s) → createTree → createCommit → updateRef.
  * Also supports GET /user.
  */
 function createFlowHandler(): (req: RecordedRequest) => MockApiResponse {
@@ -163,6 +163,14 @@ function createFlowHandler(): (req: RecordedRequest) => MockApiResponse {
           message: "init",
           parents: [],
         },
+      };
+    }
+
+    if (method === "GET" && url.includes("/git/trees/")) {
+      return {
+        ok: true,
+        status: 200,
+        body: { sha: BASE_TREE_SHA, url, tree: [], truncated: false },
       };
     }
 
@@ -811,7 +819,7 @@ describe("GitHubApiPublisher", () => {
   });
 
   describe("full Git Data flow", () => {
-    it("performs getRef → getCommit → createBlob → createTree → createCommit → updateRef", async () => {
+    it("checks the base tree before creating blobs, tree, commit, and ref", async () => {
       const { fetch, requests } = createMockFetch(createFlowHandler());
       const publisher = new GitHubApiPublisher({
         token: TEST_TOKEN,
@@ -827,14 +835,14 @@ describe("GitHubApiPublisher", () => {
         (r) =>
           `${r.method} ${r.url.replace(/https:\/\/api\.github\.com\/repos\/[^/]+\/[^/]+/, "")}`,
       );
-      // No assets: getRef, getCommit, 1 blob (markdown), createTree, createCommit, updateRef = 6
-      assert.equal(methods.length, 6);
+      assert.equal(methods.length, 7);
       assert.ok(methods[0]!.includes("GET /git/refs/heads/"));
       assert.ok(methods[1]!.includes("GET /git/commits/"));
-      assert.ok(methods[2]!.includes("POST /git/blobs"));
-      assert.ok(methods[3]!.includes("POST /git/trees"));
-      assert.ok(methods[4]!.includes("POST /git/commits"));
-      assert.ok(methods[5]!.includes("PATCH /git/refs/heads/"));
+      assert.equal(methods[2], `GET /git/trees/${BASE_TREE_SHA}?recursive=1`);
+      assert.ok(methods[3]!.includes("POST /git/blobs"));
+      assert.ok(methods[4]!.includes("POST /git/trees"));
+      assert.ok(methods[5]!.includes("POST /git/commits"));
+      assert.ok(methods[6]!.includes("PATCH /git/refs/heads/"));
     });
 
     it("uses the base commit SHA from getRef as the parent in createCommit", async () => {

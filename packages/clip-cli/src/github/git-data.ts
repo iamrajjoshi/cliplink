@@ -50,6 +50,7 @@ export interface GitTree {
   sha: string;
   url: string;
   tree: TreeEntry[];
+  truncated: boolean;
 }
 
 export interface CreateCommitResponse {
@@ -91,6 +92,11 @@ export class GitDataApi {
   /** GET /repos/{owner}/{repo}/git/commits/{sha} — get a commit (with its tree SHA). */
   async getCommit(sha: string): Promise<GitCommit> {
     return this.client.requestRepoJson<GitCommit>("GET", `/git/commits/${sha}`);
+  }
+
+  /** GET the complete file and directory listing for a tree. */
+  async getTree(sha: string): Promise<GitTree> {
+    return this.client.requestRepoJson<GitTree>("GET", `/git/trees/${sha}?recursive=1`);
   }
 
   /**

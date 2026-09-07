@@ -38,17 +38,16 @@ clip login
 clip init
 ```
 
-Follow the browser login, then enter **`clip`** as the repository name when `clip init` asks. This creates a **public** copy of the template. Pick another name if you already have a `clip` repository.
+Follow the browser login, then choose a repository name when `clip init` asks. This creates a **public** copy of the template and remembers your choice.
 
-Clone it, replacing `YOUR_GITHUB_USERNAME` with your username:
+Clone it to customize the site, replacing `YOUR_GITHUB_USERNAME` and `YOUR_REPO`:
 
 ```sh
-git clone https://github.com/YOUR_GITHUB_USERNAME/clip.git
-cd clip
+git clone https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPO.git
+cd YOUR_REPO
 ```
 
-> [!IMPORTANT]
-> Run the published CLI, **0.1.1**, from your cloned site. The no-clone workflow on `main` hasn't shipped to npm yet. If you chose a different repository name, use that name in the clone command and directory.
+With Cliplink 0.2.0, you can save clips from any directory after login and setup. A local clone is only required for editing the site or using `--local`.
 
 To put the site online, edit `site.config.mjs`, choose **GitHub Actions** in your repository's **Settings → Pages**, then commit and push the configuration. The [template setup guide](https://github.com/iamrajjoshi/cliplink-template#quick-start) covers deployment and custom domains.
 
@@ -61,8 +60,10 @@ clip https://developer.mozilla.org/en-US/docs/Web/CSS
 ## What will you keep?
 
 ```sh
-# A link, with its title and description
-clip https://developer.mozilla.org/en-US/docs/Web/CSS
+# A link with your own title, tags, and note
+clip https://developer.mozilla.org/en-US/docs/Web/CSS \
+  --title "CSS reference" --tags css,reference \
+  --note "Useful when I remember what a property does but forget its name."
 
 # An image from your computer
 clip ./screenshot.png
@@ -70,11 +71,11 @@ clip ./screenshot.png
 # A video reference
 clip 'https://www.youtube.com/watch?v=VIDEO_ID'
 
-# A note from stdin, using local Git
-printf 'Give the useful things enough space.\n' | clip - --local
+# A Markdown note from a file
+clip - --tag notes < note.md
 ```
 
-X posts work too: pass a public post URL to `clip`. For interactive clips, you can add your own note through `$VISUAL` or `$EDITOR`.
+X posts work too: pass a public post URL to `clip`. Use `--note` to add your own words directly, or use `$VISUAL` or `$EDITOR` through the interactive prompt. See the [metadata flags](docs/cli.md#metadata-flags) for descriptions, image alt text, and supported clip kinds.
 
 Want to see the Markdown first?
 
@@ -97,8 +98,7 @@ The CLI gathers content and commits it. The template handles how it looks and de
 
 After `clip login`, publishing uses the GitHub API. Use `--local` to write through your checkout and local Git instead; add `--no-push` to make a local commit without pushing.
 
-> [!WARNING]
-> GitHub API publishing doesn't refresh your checkout. Keep it current: collision checks use local filenames, so repeated slugs can overwrite existing remote content. See [publishing behavior](docs/cli.md#publishing) before saving repeated items.
+GitHub API publishing doesn't refresh your checkout. It checks the remote paths before writing and stops if a clip or asset already exists. See [publishing behavior](docs/cli.md#publishing) before saving repeated items.
 
 ## Documentation
 

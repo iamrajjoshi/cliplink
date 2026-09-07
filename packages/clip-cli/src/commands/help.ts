@@ -21,8 +21,18 @@ flags:
   --repo <path>                  target the clip repo when running from outside the workspace
   --dry-run                      print the clip that would be written without changing the repo
   --no-push                      commit locally but skip git push
+  --tag <tag>                    add one tag (repeatable; commas are literal)
+  --tags <tags>                  add comma-separated tags (repeatable)
+  --title <text>                 override the title and generated slug for links or videos
+  --description <text>           override a link's description
+  --alt <text>                   override a local image's alt text
+  --note <markdown>              add a Markdown note without opening the editor; append to stdin
   --help, -h                     show this help
   --version                      print the CLI version
+
+Value flags also accept --flag=value. Use -- to end options before the input.
+Tags are trimmed and deduplicated case-sensitively; default tags are kept first.
+Repeated title, description, alt, or note flags use the last value.
 `;
 
 export function printHelp(): void {

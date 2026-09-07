@@ -135,6 +135,7 @@ function createFlowHandler(
     baseTreeSha?: string;
     newCommitSha?: string;
     newTreeSha?: string;
+    existingEntries?: { path: string; type: string }[];
   } = {},
 ): (req: RecordedRequest) => MockApiResponse {
   const baseCommitSha = opts.baseCommitSha ?? BASE_COMMIT_SHA;
@@ -168,6 +169,19 @@ function createFlowHandler(
           tree: { sha: baseTreeSha, url: "" },
           message: "init",
           parents: [],
+        },
+      };
+    }
+
+    if (method === "GET" && url.includes("/git/trees/")) {
+      return {
+        ok: true,
+        status: 200,
+        body: {
+          sha: baseTreeSha,
+          url,
+          tree: opts.existingEntries ?? [],
+          truncated: false,
         },
       };
     }
@@ -355,13 +369,60 @@ describe("GitHubApiPublisher error handling", () => {
     });
   });
 
-  // -------------------------------------------------------------------------
-  // VAL-REMOTE-011: Existing markdown is replaced
-  // -------------------------------------------------------------------------
+  describe("remote path collision checks", () => {
+    const params = makeParams({ assets: [makeAsset()] });
+    const collisions = [
+      { name: "an existing markdown file", path: params.markdownPath, type: "blob" },
+      { name: "an existing asset", path: params.assets[0]!.path, type: "blob" },
+      { name: "a directory at the markdown path", path: params.markdownPath, type: "tree" },
+      { name: "a directory at the asset path", path: params.assets[0]!.path, type: "tree" },
+      { name: "a file above the markdown path", path: "apps/web/src/content", type: "blob" },
+      { name: "a file above the asset path", path: "apps/web/public/clips", type: "blob" },
+      { name: "a submodule above an output path", path: "apps/web", type: "commit" },
+      {
+        name: "an existing file below an output path",
+        path: `${params.markdownPath}/existing.md`,
+        type: "blob",
+      },
+    ];
 
-  describe("existing markdown replacement (VAL-REMOTE-011)", () => {
-    it("uses base_tree so existing files are preserved and same-path entries overwrite", async () => {
-      const { fetch, requests } = createMockFetch(createFlowHandler());
+    for (const { name, ...entry } of collisions) {
+      it(`refuses ${name} before any write`, async () => {
+        const { fetch, requests } = createMockFetch(
+          createFlowHandler({ existingEntries: [entry] }),
+        );
+        const publisher = new GitHubApiPublisher({
+          token: TEST_TOKEN,
+          owner: OWNER,
+          repo: REPO,
+          branch: BRANCH,
+          fetchFn: fetch,
+        });
+
+        await assert.rejects(publisher.publish(params), (error: unknown) => {
+          assert.ok(error instanceof GitHubPublishError);
+          assert.equal(error.kind, "conflict");
+          assert.match(error.message, /Refusing to overwrite remote path/);
+          assert.ok(error.message.includes(entry.path));
+          return true;
+        });
+        assert.ok(requests.every((request) => request.method === "GET"));
+      });
+    }
+
+    it("allows new files inside existing directories and preserves unrelated files", async () => {
+      const { fetch, requests } = createMockFetch(
+        createFlowHandler({
+          existingEntries: [
+            { path: "apps", type: "tree" },
+            { path: "apps/web", type: "tree" },
+            { path: "apps/web/src/content/clips", type: "tree" },
+            { path: `${params.markdownPath}.backup`, type: "blob" },
+            { path: "apps/web/public/clips/test-slug", type: "tree" },
+            { path: "apps/web/public/clips/test-slug/other.png", type: "blob" },
+          ],
+        }),
+      );
       const publisher = new GitHubApiPublisher({
         token: TEST_TOKEN,
         owner: OWNER,
@@ -370,23 +431,75 @@ describe("GitHubApiPublisher error handling", () => {
         fetchFn: fetch,
       });
 
-      const markdownPath = "apps/web/src/content/clips/2026-08-19-existing.md";
-      await publisher.publish(makeParams({ markdownPath }));
+      await publisher.publish(params);
 
-      const treeRequest = requests.find((r) => r.url.endsWith("/git/trees") && r.method === "POST");
-      assert.ok(treeRequest);
+      const treeRequest = requests.find(
+        (request) => request.method === "POST" && request.url.endsWith("/git/trees"),
+      );
       const body = treeRequest!.bodyJson as { base_tree: string; tree: { path: string }[] };
-
-      // base_tree preserves existing files
       assert.equal(body.base_tree, BASE_TREE_SHA);
-
-      // The markdown entry at the same path overwrites the existing one
-      const mdEntry = body.tree.find((e) => e.path === markdownPath);
-      assert.ok(mdEntry, "markdown entry present at the same path");
+      assert.deepEqual(
+        body.tree.map((entry) => entry.path),
+        [params.markdownPath, params.assets[0]!.path],
+      );
     });
 
-    it("does not create duplicate entries for the same path", async () => {
-      const { fetch, requests } = createMockFetch(createFlowHandler());
+    for (const tree of [
+      { sha: BASE_TREE_SHA, tree: [], truncated: true },
+      { sha: BASE_TREE_SHA, tree: [] },
+      { sha: "unexpected-tree", tree: [], truncated: false },
+      { sha: BASE_TREE_SHA, tree: null, truncated: false },
+      { sha: BASE_TREE_SHA, tree: [{}], truncated: false },
+    ]) {
+      it(`rejects incomplete or invalid tree data: ${JSON.stringify(tree)}`, async () => {
+        const flow = createFlowHandler();
+        const { fetch, requests } = createMockFetch((request) =>
+          request.method === "GET" && request.url.includes("/git/trees/")
+            ? { ok: true, status: 200, body: tree }
+            : flow(request),
+        );
+        const publisher = new GitHubApiPublisher({
+          token: TEST_TOKEN,
+          owner: OWNER,
+          repo: REPO,
+          branch: BRANCH,
+          fetchFn: fetch,
+        });
+
+        await assert.rejects(publisher.publish(params), /incomplete or invalid tree/);
+        assert.ok(requests.every((request) => request.method === "GET"));
+      });
+    }
+
+    for (const status of [401, 403, 404, 409, 429, 500]) {
+      it(`stops before writes when the tree lookup returns ${status}`, async () => {
+        const flow = createFlowHandler();
+        const { fetch, requests } = createMockFetch((request) =>
+          request.method === "GET" && request.url.includes("/git/trees/")
+            ? { ok: false, status, body: { message: "Tree unavailable" } }
+            : flow(request),
+        );
+        const publisher = new GitHubApiPublisher({
+          token: TEST_TOKEN,
+          owner: OWNER,
+          repo: REPO,
+          branch: BRANCH,
+          fetchFn: fetch,
+        });
+
+        await assert.rejects(publisher.publish(params), GitHubPublishError);
+        assert.ok(requests.every((request) => request.method === "GET"));
+      });
+    }
+
+    it("stops before writes when the tree lookup loses its network connection", async () => {
+      const flow = createFlowHandler();
+      const { fetch, requests } = createMockFetch((request) => {
+        if (request.method === "GET" && request.url.includes("/git/trees/")) {
+          throw new TypeError("fetch failed");
+        }
+        return flow(request);
+      });
       const publisher = new GitHubApiPublisher({
         token: TEST_TOKEN,
         owner: OWNER,
@@ -395,25 +508,28 @@ describe("GitHubApiPublisher error handling", () => {
         fetchFn: fetch,
       });
 
-      const markdownPath = "apps/web/src/content/clips/2026-08-19-test.md";
-      await publisher.publish(makeParams({ markdownPath }));
-
-      const treeRequest = requests.find((r) => r.url.endsWith("/git/trees") && r.method === "POST");
-      assert.ok(treeRequest);
-      const body = treeRequest!.bodyJson as { tree: { path: string }[] };
-
-      const mdEntries = body.tree.filter((e) => e.path === markdownPath);
-      assert.equal(mdEntries.length, 1, "exactly one entry for the markdown path");
+      await assert.rejects(publisher.publish(params), (error: unknown) => {
+        assert.ok(error instanceof GitHubPublishError);
+        assert.equal(error.kind, "network");
+        return true;
+      });
+      assert.ok(requests.every((request) => request.method === "GET"));
     });
-  });
 
-  // -------------------------------------------------------------------------
-  // VAL-REMOTE-012: Existing asset is replaced
-  // -------------------------------------------------------------------------
-
-  describe("existing asset replacement (VAL-REMOTE-012)", () => {
-    it("same-path asset entry points to the newly uploaded blob", async () => {
-      const { fetch, requests } = createMockFetch(createFlowHandler());
+    it("rechecks the new branch tree after a conflict and stops if a path was taken", async () => {
+      let patchCount = 0;
+      const secondTreeSha = "2220000000000000000000000000000000000000";
+      const { fetch, requests } = createMockFetch((request) => {
+        if (request.method === "PATCH") {
+          patchCount++;
+          return { ok: false, status: 409, body: { message: "Update is not a fast forward" } };
+        }
+        return createFlowHandler({
+          baseCommitSha: patchCount ? "1110000000000000000000000000000000000000" : BASE_COMMIT_SHA,
+          baseTreeSha: patchCount ? secondTreeSha : BASE_TREE_SHA,
+          existingEntries: patchCount ? [{ path: params.markdownPath, type: "blob" }] : [],
+        })(request);
+      });
       const publisher = new GitHubApiPublisher({
         token: TEST_TOKEN,
         owner: OWNER,
@@ -422,16 +538,19 @@ describe("GitHubApiPublisher error handling", () => {
         fetchFn: fetch,
       });
 
-      const assetPath = "apps/web/public/clips/test-slug/favicon.png";
-      await publisher.publish(makeParams({ assets: [makeAsset({ path: assetPath })] }));
-
-      const treeRequest = requests.find((r) => r.url.endsWith("/git/trees") && r.method === "POST");
-      assert.ok(treeRequest);
-      const body = treeRequest!.bodyJson as { tree: { path: string; sha: string }[] };
-
-      const assetEntry = body.tree.find((e) => e.path === assetPath);
-      assert.ok(assetEntry, "asset entry present at the same path");
-      assert.equal(assetEntry.sha, ASSET_BLOB_SHA, "points to the new blob SHA");
+      await assert.rejects(publisher.publish(params), /Refusing to overwrite remote path/);
+      assert.equal(patchCount, 1);
+      const treeRequests = requests.filter(
+        (request) => request.method === "GET" && request.url.includes("/git/trees/"),
+      );
+      assert.deepEqual(
+        treeRequests.map((request) => request.url.split("/git/trees/")[1]),
+        [`${BASE_TREE_SHA}?recursive=1`, `${secondTreeSha}?recursive=1`],
+      );
+      const afterConflict = requests.slice(
+        requests.findIndex((request) => request.method === "PATCH") + 1,
+      );
+      assert.ok(afterConflict.every((request) => request.method === "GET"));
     });
   });
 
@@ -944,6 +1063,10 @@ describe("GitHubApiPublisher error handling", () => {
           };
         }
 
+        if (method === "GET" && url.includes("/git/trees/")) {
+          return createFlowHandler()(req);
+        }
+
         if (method === "POST" && url.endsWith("/git/blobs")) {
           const body = req.bodyJson as { encoding: string };
           const sha = body.encoding === "utf-8" ? MARKDOWN_BLOB_SHA : ASSET_BLOB_SHA;
@@ -1030,6 +1153,10 @@ describe("GitHubApiPublisher error handling", () => {
               parents: [],
             },
           };
+        }
+
+        if (method === "GET" && url.includes("/git/trees/")) {
+          return createFlowHandler()(req);
         }
 
         if (method === "POST" && url.endsWith("/git/blobs")) {
@@ -1135,6 +1262,10 @@ describe("GitHubApiPublisher error handling", () => {
           };
         }
 
+        if (method === "GET" && url.includes("/git/trees/")) {
+          return createFlowHandler()(req);
+        }
+
         if (method === "POST" && url.endsWith("/git/blobs")) {
           const body = req.bodyJson as { encoding: string };
           const sha = body.encoding === "utf-8" ? MARKDOWN_BLOB_SHA : ASSET_BLOB_SHA;
@@ -1215,6 +1346,10 @@ describe("GitHubApiPublisher error handling", () => {
               parents: [],
             },
           };
+        }
+
+        if (method === "GET" && url.includes("/git/trees/")) {
+          return createFlowHandler()(req);
         }
 
         if (method === "POST" && url.endsWith("/git/blobs")) {
@@ -1303,6 +1438,10 @@ describe("GitHubApiPublisher error handling", () => {
           };
         }
 
+        if (method === "GET" && url.includes("/git/trees/")) {
+          return createFlowHandler()(req);
+        }
+
         if (method === "POST" && url.endsWith("/git/blobs")) {
           const body = req.bodyJson as { encoding: string };
           const sha = body.encoding === "utf-8" ? MARKDOWN_BLOB_SHA : ASSET_BLOB_SHA;
@@ -1376,6 +1515,10 @@ describe("GitHubApiPublisher error handling", () => {
               parents: [],
             },
           };
+        }
+
+        if (method === "GET" && url.includes("/git/trees/")) {
+          return createFlowHandler()(req);
         }
 
         if (method === "POST" && url.endsWith("/git/blobs")) {
@@ -1546,6 +1689,10 @@ describe("GitHubApiPublisher error handling", () => {
           };
         }
 
+        if (method === "GET" && url.includes("/git/trees/")) {
+          return createFlowHandler()(req);
+        }
+
         if (method === "POST" && url.endsWith("/git/blobs")) {
           const body = req.bodyJson as { encoding: string };
           const sha = body.encoding === "utf-8" ? MARKDOWN_BLOB_SHA : ASSET_BLOB_SHA;
@@ -1623,6 +1770,10 @@ describe("GitHubApiPublisher error handling", () => {
               parents: [],
             },
           };
+        }
+
+        if (method === "GET" && url.includes("/git/trees/")) {
+          return createFlowHandler()(req);
         }
 
         if (method === "POST" && url.endsWith("/git/blobs")) {

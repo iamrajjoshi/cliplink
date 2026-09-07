@@ -8,6 +8,10 @@ permissions:
   contents: read
   id-token: write # Required for trusted publishing (OIDC)
 
+concurrency:
+  group: npm-publish
+  cancel-in-progress: false
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -36,10 +40,19 @@ jobs:
       - name: Test
         run: pnpm test
 
+      - name: Test release checks
+        run: node --test scripts/prepare-release.test.mjs
+
+      - name: Check release versions
+        id: release
+        run: node scripts/prepare-release.mjs "$GITHUB_REF_NAME"
+
       - name: Publish cliplink-schema
+        if: steps.release.outputs.schema_publish == 'true'
         run: npm publish
         working-directory: packages/clip-schema
 
       - name: Publish cliplink
+        if: steps.release.outputs.cli_publish == 'true'
         run: npm publish
         working-directory: packages/clip-cli

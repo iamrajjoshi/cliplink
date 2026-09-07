@@ -6,9 +6,9 @@ Install the npm package as `cliplink`; run it with `clip`. See the [quick start]
 
 ## Release status
 
-The published version, **0.1.1**, requires a local checkout even when publishing through the GitHub API. Run it inside your cloned site or pass `--repo /path/to/your/site`.
+**0.2.0** adds metadata flags and remote publishing without a local clone. Run `clip login`, then `clip init` or configure an existing collection. `clip init` accepts any available repository name and remembers it; the default is `clip`.
 
-Source `main` supports remote publishing without a clone, but that change hasn't shipped to npm. Its `clip init` default is `clip`; npm 0.1.1 defaults to `cliplink-template`. Enter `clip` explicitly to follow the quick start.
+Use Node.js 24 (recommended). Supported versions are Node.js 20.17+, 22.13+, or 23.5 and later; Node.js 21 and earlier 22.x releases aren't supported by the prompt dependencies. Upgrade an older CLI with `npm install --global cliplink@latest`.
 
 ## Commands and flags
 
@@ -33,6 +33,28 @@ Run `clip --help` for built-in help or `clip --version` to check the installed r
 
 You can set `CLIP_REPO` instead of supplying `--repo` each time.
 
+### Metadata flags
+
+| Flag                   | Applies to       | Behavior                                                   |
+| ---------------------- | ---------------- | ---------------------------------------------------------- |
+| `--tag <tag>`          | All clips        | Add one tag; repeat to add more                            |
+| `--tags <a,b>`         | All clips        | Add comma-separated tags; repeat to add more               |
+| `--title <text>`       | Links and videos | Replace the fetched title and use it for the filename slug |
+| `--description <text>` | Links            | Replace the fetched description                            |
+| `--alt <text>`         | Images           | Set the image's alt text                                   |
+| `--note <text>`        | All clips        | Add a Markdown note without opening an editor              |
+
+Both `--title "My title"` and `--title="My title"` work. Tags are trimmed and deduplicated case-sensitively; automatic tags come first, followed by your tags in command order. `--tag` treats commas literally, while `--tags` splits on commas. Empty values and flags that don't apply to the clip kind produce an error before fetching content or publishing. Repeating a title, description, alt text, or note flag uses the last value.
+
+```sh
+clip https://developer.mozilla.org/en-US/docs/Web/CSS \
+  --title "CSS reference" --tags css,reference --note "Check grid examples."
+clip ./screenshot.png --alt "A two-column search layout" --tag design
+clip - --tags notes,ideas --note "Follow up next week." < note.md
+```
+
+For a stdin note, `--note` appends to the original content with a blank line between them. It doesn't replace the piped text. Notes use their Markdown content for the title; `--title` is only for links and videos. Use `--` to end option parsing if your input starts with a dash.
+
 ## Saving content
 
 Cliplink detects the input type and fetches the available metadata. It supports five kinds: `link`, `tweet`, `image`, `video`, and `note`.
@@ -42,12 +64,12 @@ clip https://example.com/article
 clip https://x.com/someone/status/123
 clip ./screenshot.png
 clip 'https://www.youtube.com/watch?v=VIDEO_ID'
-printf 'A note worth keeping.\n' | clip - --local
+clip - < note.md
 ```
 
 Set `$VISUAL` or `$EDITOR` before choosing the interactive editor prompt. The CLI prefers `$VISUAL` when both exist. Prompts require terminal input and output; piped notes work without a prompt.
 
-GitHub links receive a `github` tag automatically. There isn't a custom-tags prompt; edit the generated frontmatter to add your own tags.
+GitHub links receive a `github` tag automatically. Add your own with `--tag` or `--tags`, or edit the generated frontmatter later.
 
 Video clips contain a reference and an available thumbnail, not a downloaded video. X posts depend on X's syndication endpoint; private or unavailable posts may fail.
 
@@ -65,13 +87,13 @@ Local mode uses the checkout's current branch and upstream. Configure Git's comm
 
 ### Keep your checkout current
 
-Remote publishing checks slug collisions against local content, not the remote repository, and it doesn't update local files after a successful publish. Pull the latest changes before saving another item:
+Remote publishing doesn't update local files after a successful publish. It checks each destination path against the current remote tree and stops before writing if Markdown or assets would replace existing content. Pull the latest changes into your clone before saving a repeated item so the CLI can choose an unused slug:
 
 ```sh
 git pull --ff-only
 ```
 
-An existing slug that your checkout hasn't seen can replace same-day Markdown. Asset directories use the slug without the date, so repeated slugs can also replace images across dates. If you save repeated items, review their filenames and assets; don't assume each remote save will create a separate copy.
+Without a clone, give a repeated link or video a different `--title`, or use an up-to-date checkout to generate the next available slug. The CLI also stops if GitHub can't return a complete tree for the collision check. It never forces a branch update.
 
 ### Website deployment
 
@@ -86,12 +108,14 @@ After setup, commits to `main` trigger the template's build and deployment workf
 ```sh
 clip config
 clip config set github.owner YOUR_GITHUB_USERNAME
-clip config set github.repo clip
+clip config set github.repo YOUR_REPO
 clip config set github.branch main
 clip config get github.repo
 ```
 
 Configuration lives at `~/.config/clip/config.json`, or `$XDG_CONFIG_HOME/clip/config.json` when set. The `github.branch` setting controls GitHub API publishing; local Git uses the checkout's current branch.
+
+After renaming a GitHub repository, update `github.repo` to the new name and update your clone's `origin` URL. Check its Pages deployment and custom domain separately.
 
 ## Authentication
 
@@ -125,7 +149,7 @@ The template owns rendering and deployment; this repository owns the CLI and sha
 
 **“Could not find the clip workspace root”**
 
-Run npm 0.1.1 from your cloned site or pass `--repo /path/to/clip`. See [release status](#release-status) for the difference between npm and source `main`.
+Local mode requires a site checkout. Run from it or pass `--repo /path/to/your/site`. For remote publishing without a clone, upgrade to 0.2.0 or later and run `clip login` and `clip init` (or configure your existing repository).
 
 **The publish succeeded, but the website hasn't changed**
 

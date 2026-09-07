@@ -14,19 +14,19 @@ Use Node.js 24 (recommended), Git, and a GitHub account.
 npm install --global cliplink
 ```
 
-The package installs the `clip` command. Run `clip login`, then `clip init` to create a **public** repository from the template. Enter `clip` as its name to follow the [quick start](https://github.com/iamrajjoshi/cliplink#quick-start).
+The package installs the `clip` command. Run `clip login`, then `clip init` to create a **public** repository from the template. Choose any available name; Cliplink remembers it.
 
-**npm 0.1.1 requires a local clone of your site**, including for GitHub API publishing. Run commands from that checkout or pass `--repo /path/to/your/site`. Source `main` includes a no-clone workflow that hasn't shipped yet.
+With **0.2.0**, remote publishing works from any directory after setup. Use a local clone to edit the site or publish with `--local`.
 
-Configure the template and GitHub Pages separately to put the website online. Keep your checkout current: remote publishing checks local filenames for collisions, so repeated slugs can overwrite remote content. The [CLI guide](https://github.com/iamrajjoshi/cliplink/blob/main/docs/cli.md) covers publishing, authentication, and troubleshooting.
+Configure the template and GitHub Pages separately to put the website online. Remote publishing rejects existing destination paths to protect saved clips and assets. The [CLI guide](https://github.com/iamrajjoshi/cliplink/blob/main/docs/cli.md) covers publishing, authentication, and troubleshooting.
 
 ## Try a clip
 
-From your cloned site:
-
 ```sh
-clip https://developer.mozilla.org/en-US/docs/Web/CSS
-clip ./screenshot.png
+clip https://developer.mozilla.org/en-US/docs/Web/CSS \
+  --title "CSS reference" --tags css,reference --note "Check grid examples."
+clip ./screenshot.png --alt "A two-column search layout" --tag design
+clip - --tag notes < note.md
 ```
 
-Add `--dry-run` to print the Markdown without writing files or publishing. Run `clip --help` for available commands and flags.
+Add `--dry-run` to print the Markdown without writing files or publishing. Tags and notes apply to all clip kinds; title applies to links and videos, description to links, and alt text to images. Run `clip --help` for available commands and flags.

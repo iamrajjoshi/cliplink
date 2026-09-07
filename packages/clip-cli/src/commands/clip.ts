@@ -17,7 +17,7 @@ import { scrapeLink } from "../scrapers/og";
 import { scrapeTweet } from "../scrapers/tweet";
 import { scrapeVideo } from "../scrapers/video";
 import { baseSlugFromText, datedFilename, ensureUniqueSlug } from "../slug";
-import type { CliOptions } from "../types";
+import type { CliOptions, DetectedKind } from "../types";
 import {
   expandHomeDirectory,
   extFromContentType,
@@ -34,6 +34,7 @@ function parseArgs(argv: string[]): CliOptions {
     noPush: false,
     help: false,
     local: false,
+    tags: [],
   };
 
   const positionals: string[] = [];
@@ -46,29 +47,64 @@ function parseArgs(argv: string[]): CliOptions {
     }
 
     if (arg === "--") {
-      continue;
+      positionals.push(...argv.slice(index + 1));
+      break;
     }
 
-    if (arg === "--repo") {
-      const value = argv[index + 1];
+    const equalsIndex = arg.indexOf("=");
+    const flag = equalsIndex === -1 ? arg : arg.slice(0, equalsIndex);
 
-      if (!value || value.startsWith("--")) {
-        throw new Error("Missing value for --repo");
+    if (
+      flag === "--repo" ||
+      flag === "--tag" ||
+      flag === "--tags" ||
+      flag === "--title" ||
+      flag === "--description" ||
+      flag === "--alt" ||
+      flag === "--note"
+    ) {
+      const value = equalsIndex === -1 ? argv[index + 1] : arg.slice(equalsIndex + 1);
+
+      if (
+        value === undefined ||
+        (equalsIndex === -1 && (value.startsWith("--") || value === "-h"))
+      ) {
+        throw new Error(`Missing value for ${flag}`);
       }
 
-      options.repo = value;
-      index += 1;
-      continue;
-    }
-
-    if (arg.startsWith("--repo=")) {
-      const value = arg.slice("--repo=".length);
-
-      if (!value) {
-        throw new Error("Missing value for --repo");
+      if (!value.trim()) {
+        throw new Error(`Empty value for ${flag}`);
       }
 
-      options.repo = value;
+      if (equalsIndex === -1) index += 1;
+
+      switch (flag) {
+        case "--repo":
+          options.repo = value;
+          break;
+        case "--tag":
+          options.tags.push(value.trim());
+          break;
+        case "--tags": {
+          const tags = value.split(",").map((tag) => tag.trim());
+          if (tags.some((tag) => !tag)) throw new Error("Empty tag in --tags");
+          options.tags.push(...tags);
+          break;
+        }
+        case "--title":
+          options.title = value.trim();
+          break;
+        case "--description":
+          options.description = value.trim();
+          break;
+        case "--alt":
+          options.alt = value.trim();
+          break;
+        case "--note":
+          options.note = value.trim();
+          break;
+      }
+
       continue;
     }
 
@@ -105,6 +141,18 @@ function parseArgs(argv: string[]): CliOptions {
 
   options.input = positionals[0];
   return options;
+}
+
+function validateMetadataOptions(options: CliOptions, kind: DetectedKind): void {
+  if (options.title !== undefined && kind !== "link" && kind !== "video") {
+    throw new Error(`--title is only supported for link and video clips (received ${kind}).`);
+  }
+  if (options.description !== undefined && kind !== "link") {
+    throw new Error(`--description is only supported for link clips (received ${kind}).`);
+  }
+  if (options.alt !== undefined && kind !== "image") {
+    throw new Error(`--alt is only supported for image clips (received ${kind}).`);
+  }
 }
 
 async function downloadOptionalAsset({
@@ -282,6 +330,9 @@ export async function runClipCommand(args: string[], deps?: ClipCommandDeps): Pr
     return;
   }
 
+  const detection = await detectInput(options.input, invocationCwd);
+  validateMetadataOptions(options, detection.kind);
+
   const token = await readToken(deps);
   const mode = detectMode({ local: options.local, token });
   const explicitRepo = options.repo ?? process.env.CLIP_REPO;
@@ -294,9 +345,10 @@ export async function runClipCommand(args: string[], deps?: ClipCommandDeps): Pr
           start: explicitRepo ? repoStart : cliDir,
           fallbackStarts: explicitRepo ? [] : [invocationCwd],
         });
-  const detection = await detectInput(options.input, invocationCwd);
   const clipsAssetRelDir = path.relative(paths.repoRoot, paths.clipsAssetDir);
   const clippedAt = new Date();
+  const defaultTags = "url" in detection ? getDefaultTagsForUrl(detection.url) : [];
+  const tags = [...new Set([...defaultTags, ...options.tags])];
 
   let frontmatter: ClipFrontmatter;
   let body: string;
@@ -304,9 +356,10 @@ export async function runClipCommand(args: string[], deps?: ClipCommandDeps): Pr
 
   if (detection.kind === "link") {
     const scraped = await scrapeLink(detection.url.toString());
-    const initialSlug = slugify(scraped.title) || slugify(detection.url.hostname) || "link";
+    const title = options.title ?? scraped.title;
+    const initialSlug = slugify(title) || slugify(detection.url.hostname) || "link";
     const slug = await ensureUniqueSlug(initialSlug, paths.contentDir);
-    const prompts = await collectPrompts();
+    const prompts = await collectPrompts(undefined, options.note);
     const favicon = await downloadOptionalAsset({
       slug,
       url: scraped.faviconUrl,
@@ -329,10 +382,10 @@ export async function runClipCommand(args: string[], deps?: ClipCommandDeps): Pr
       kind: "link",
       slug,
       clippedAt,
-      tags: getDefaultTagsForUrl(detection.url),
+      tags,
       url: detection.url.toString(),
-      title: scraped.title,
-      description: scraped.description,
+      title,
+      description: options.description ?? scraped.description,
       siteName: scraped.siteName,
       favicon: favicon?.url,
       ogImage: ogImage?.url,
@@ -344,7 +397,7 @@ export async function runClipCommand(args: string[], deps?: ClipCommandDeps): Pr
       slugify(`${scraped.author.handle}-${scraped.text.slice(0, 40)}`) ||
       `${scraped.author.handle}-tweet`;
     const slug = await ensureUniqueSlug(initialSlug, paths.contentDir);
-    const prompts = await collectPrompts();
+    const prompts = await collectPrompts(undefined, options.note);
     const avatar = await downloadOptionalAsset({
       slug,
       url: scraped.author.avatarUrl,
@@ -378,7 +431,7 @@ export async function runClipCommand(args: string[], deps?: ClipCommandDeps): Pr
       kind: "tweet",
       slug,
       clippedAt,
-      tags: [],
+      tags,
       platform: "x",
       url: detection.url.toString(),
       author: {
@@ -393,9 +446,10 @@ export async function runClipCommand(args: string[], deps?: ClipCommandDeps): Pr
     body = prompts.body;
   } else if (detection.kind === "video") {
     const scraped = await scrapeVideo(detection.url.toString());
-    const initialSlug = slugify(scraped.title) || `${scraped.provider}-video`;
+    const title = options.title ?? scraped.title;
+    const initialSlug = slugify(title) || `${scraped.provider}-video`;
     const slug = await ensureUniqueSlug(initialSlug, paths.contentDir);
-    const prompts = await collectPrompts();
+    const prompts = await collectPrompts(undefined, options.note);
     const thumbnail = await downloadOptionalAsset({
       slug,
       url: scraped.thumbnailUrl,
@@ -410,10 +464,10 @@ export async function runClipCommand(args: string[], deps?: ClipCommandDeps): Pr
       kind: "video",
       slug,
       clippedAt,
-      tags: [],
+      tags,
       url: detection.url.toString(),
       provider: scraped.provider,
-      title: scraped.title,
+      title,
       channel: scraped.channel,
       thumbnail: thumbnail?.url,
     });
@@ -422,7 +476,7 @@ export async function runClipCommand(args: string[], deps?: ClipCommandDeps): Pr
     const inspected = await inspectImage(detection.filePath);
     const initialSlug = slugify(inspected.stem) || "image";
     const slug = await ensureUniqueSlug(initialSlug, paths.contentDir);
-    const prompts = await collectPrompts();
+    const prompts = await collectPrompts(undefined, options.note);
     const filename = `${sanitizeFilename(path.basename(inspected.filename, path.extname(inspected.filename))) || "image"}${path.extname(inspected.filename)}`;
     const src = `/clips/${slug}/${filename}`;
 
@@ -439,23 +493,23 @@ export async function runClipCommand(args: string[], deps?: ClipCommandDeps): Pr
       kind: "image",
       slug,
       clippedAt,
-      tags: [],
+      tags,
       src,
       width: inspected.width,
       height: inspected.height,
-      alt: slug.replace(/-/g, " "),
+      alt: options.alt ?? slug.replace(/-/g, " "),
     });
     body = prompts.body;
   } else if (detection.kind === "note") {
-    const initialSlug = baseSlugFromText(detection.stdinText, "note");
+    const initialSlug = baseSlugFromText(detection.stdinText.trim() || options.note || "", "note");
     const slug = await ensureUniqueSlug(initialSlug, paths.contentDir);
-    const prompts = await collectPrompts(detection.stdinText);
+    const prompts = await collectPrompts(detection.stdinText, options.note);
 
     frontmatter = clipFrontmatterSchema.parse({
       kind: "note",
       slug,
       clippedAt,
-      tags: [],
+      tags,
     });
     body = prompts.body;
   } else {

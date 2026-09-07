@@ -31,14 +31,12 @@ async function openEditor(initialText: string) {
   }
 }
 
-export async function collectPrompts(existingBody = "") {
-  if (!process.stdin.isTTY || !process.stdout.isTTY) {
-    return {
-      body: existingBody.trim(),
-    };
-  }
+export async function collectPrompts(existingBody = "", note?: string) {
+  let body = [existingBody.trim(), note?.trim()].filter(Boolean).join("\n\n");
 
-  let body = existingBody.trim();
+  if (note !== undefined || !process.stdin.isTTY || !process.stdout.isTTY) {
+    return { body };
+  }
 
   if (!body) {
     const wantsNote = await confirm({

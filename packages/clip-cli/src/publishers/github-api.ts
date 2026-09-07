@@ -54,10 +54,11 @@ export class GitHubPublishError extends Error {
  * Flow:
  *   1. GET branch ref → base commit SHA
  *   2. GET base commit → base tree SHA
- *   3. POST blobs for markdown (UTF-8) and each asset (base64)
- *   4. POST tree with all entries (base_tree, 100644 mode, nested paths)
- *   5. POST commit with the new tree and the base commit as parent
- *   6. PATCH branch ref (force: false — fast-forward only)
+ *   3. GET the full base tree and reject existing output paths
+ *   4. POST blobs for markdown (UTF-8) and each asset (base64)
+ *   5. POST tree with all entries (base_tree, 100644 mode, nested paths)
+ *   6. POST commit with the new tree and the base commit as parent
+ *   7. PATCH branch ref (force: false — fast-forward only)
  *
  * On 409 from the ref update (branch moved), the entire flow is retried
  * up to MAX_ATTEMPTS times. All other errors are translated into
@@ -105,7 +106,13 @@ export class GitHubApiPublisher implements Publisher {
         const baseCommit = await this.gitData.getCommit(baseCommitSha);
         const baseTreeSha = baseCommit.tree.sha;
 
-        // 3. Create blobs and collect tree entries
+        // 3. Check every output before uploading, including after a branch conflict.
+        await this.assertPathsAvailable(baseTreeSha, [
+          params.markdownPath,
+          ...params.assets.map((asset) => asset.path),
+        ]);
+
+        // 4. Create blobs and collect tree entries
         const entries: TreeEntry[] = [];
 
         // Markdown is always UTF-8 text
@@ -129,17 +136,17 @@ export class GitHubApiPublisher implements Publisher {
           });
         }
 
-        // 4. Create a tree with all entries, preserving existing files via base_tree
+        // 5. Create a tree with all entries, preserving existing files via base_tree
         const tree = await this.gitData.createTree(baseTreeSha, entries);
 
-        // 5. Create a commit with the new tree and the base commit as parent
+        // 6. Create a commit with the new tree and the base commit as parent
         const commit = await this.gitData.createCommit(
           tree.sha,
           [baseCommitSha],
           params.commitMessage,
         );
 
-        // 6. Update the branch ref (fast-forward only — force: false)
+        // 7. Update the branch ref (fast-forward only — force: false)
         isUpdateRefStep = true;
         await this.gitData.updateRef(this.branch, commit.sha, false);
 
@@ -170,6 +177,46 @@ export class GitHubApiPublisher implements Publisher {
     // Unreachable: the for loop always returns or throws, but TypeScript
     // needs a return or throw here to satisfy the PublishResult return type.
     throw new GitHubPublishError("Publishing failed after exhausting all attempts.", 0, "unknown");
+  }
+
+  private async assertPathsAvailable(baseTreeSha: string, paths: string[]): Promise<void> {
+    const tree = await this.gitData.getTree(baseTreeSha);
+    if (
+      tree.sha !== baseTreeSha ||
+      tree.truncated !== false ||
+      !Array.isArray(tree.tree) ||
+      tree.tree.some(
+        (entry) =>
+          !entry ||
+          typeof entry.path !== "string" ||
+          !entry.path ||
+          !["blob", "tree", "commit"].includes(entry.type),
+      )
+    ) {
+      throw new GitHubPublishError(
+        "Could not verify existing remote paths: GitHub returned an incomplete or invalid tree. " +
+          "Use --local with an up-to-date checkout to publish to this repository.",
+        0,
+        "unknown",
+      );
+    }
+
+    for (const path of paths) {
+      const conflict = tree.tree.find(
+        (entry) =>
+          entry.path === path ||
+          entry.path.startsWith(`${path}/`) ||
+          (entry.type !== "tree" && path.startsWith(`${entry.path}/`)),
+      );
+      if (conflict) {
+        throw new GitHubPublishError(
+          `Refusing to overwrite remote path '${conflict.path}'. ` +
+            "Resolve the collision in a local checkout before retrying.",
+          409,
+          "conflict",
+        );
+      }
+    }
   }
 
   /**

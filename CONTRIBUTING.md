@@ -19,7 +19,7 @@ pnpm install --frozen-lockfile
 pnpm --filter cliplink clip --help
 ```
 
-The source CLI and the npm release differ in a few places. Read [release status](docs/cli.md#release-status) before updating user-facing examples.
+Check [release status](docs/cli.md#release-status) before updating user-facing examples, and test commands against the packaged CLI before a release.
 
 ## Where things live
 
