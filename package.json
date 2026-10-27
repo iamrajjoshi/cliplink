@@ -19,15 +19,15 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@types/node": "^26.4.1",
-    "eslint": "^10.2.1",
-    "globals": "^17.5.0",
-    "knip": "^6.32.2",
-    "oxfmt": "^0.64.0",
-    "oxlint": "^1.79.0",
-    "tsx": "^4.21.0",
+    "@types/node": "^26.6.5",
+    "eslint": "^10.13.0",
+    "globals": "^17.13.0",
+    "knip": "^6.43.0",
+    "oxfmt": "^0.74.0",
+    "oxlint": "^1.89.0",
+    "tsx": "^4.23.15",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.58.2"
+    "typescript-eslint": "^8.72.0"
   },
   "pnpm": {
     "overrides": {
