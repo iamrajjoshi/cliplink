@@ -5,7 +5,9 @@ function isDark() {
   return theme ? theme === "dark" : systemTheme.matches;
 }
 function updateThemeLabel() {
-  themeButton.setAttribute("aria-label", `Switch to ${isDark() ? "light" : "dark"} mode`);
+  const dark = isDark();
+  themeButton.dataset.themeState = dark ? "dark" : "light";
+  themeButton.setAttribute("aria-label", `Switch to ${dark ? "light" : "dark"} mode`);
 }
 themeButton.hidden = false;
 updateThemeLabel();

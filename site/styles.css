@@ -175,6 +175,31 @@ code {
 .theme-toggle:hover {
   color: var(--accent);
 }
+.theme-icon {
+  grid-area: 1 / 1;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease;
+}
+.theme-icon-moon {
+  opacity: 0;
+  transform: rotate(-25deg) scale(0.75);
+}
+.theme-toggle[data-theme-state="dark"] .theme-icon-sun {
+  opacity: 0;
+  transform: rotate(25deg) scale(0.75);
+}
+.theme-toggle[data-theme-state="dark"] .theme-icon-moon {
+  opacity: 1;
+  transform: none;
+}
 .hero {
   padding-block: 64px 56px;
   background: var(--hero);
