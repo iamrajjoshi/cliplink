@@ -46,8 +46,8 @@
   },
   "dependencies": {
     "cliplink-schema": "^0.1.2",
-    "@inquirer/prompts": "^8.7.2",
-    "node-html-parser": "^9.0.3",
+    "@inquirer/prompts": "^8.8.0",
+    "node-html-parser": "^9.0.7",
     "sharp": "^0.35.5",
     "yaml": "^2.9.1"
   },
